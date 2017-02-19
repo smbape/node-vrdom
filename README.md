@@ -73,6 +73,8 @@ To use MDL, reading documetion is not enough, you also need to read those librar
 
 With hooks, to integrate MDL, you can do
 
+[jsfiddle](https://jsfiddle.net/wq3qus91/1/)
+
 ```javascript
 class MDLComponent extends vrdom.Component {
   componentDidMount() {
@@ -169,8 +171,6 @@ var container = document.createElement("div");
 document.body.appendChild(container);
 vrdom.render(<MDLElement />, container);
 ```
-
-[jsfiddle](https://jsfiddle.net/wq3qus91/1/)
 
 ## HTML Attribtes
 
@@ -664,6 +664,8 @@ However, the idea that a future problem may rise, a problem that I won't be able
 I was so pissed off that I started to create my own React.
 
 In conclusion, this library is an act of anger.
+
+Here is the [jsfiddle](https://jsfiddle.net/) with some bugs identified with preact.
 
 # License
 

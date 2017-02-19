@@ -1,7 +1,7 @@
 {
   "name": "vrdom",
   "version": "0.0.1",
-  "description": "An alternative to React",
+  "description": "An alternative to react production build for browser side.",
   "main": "dist/vrdom.js",
   "scripts": {
     "prepublish": "node cli.js prepublish",
