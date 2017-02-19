@@ -1,0 +1,21 @@
+{
+  "name": "vrdom",
+  "description": "An alternative to React",
+  "version": "0.0.1",
+  "main": "dist/vrdom.js",
+  "author": "Stéphane MBAPE",
+  "ignore": [
+    "**/.*",
+    "babel-plugin",
+    "coverage",
+    "karma-plugin",
+    "node_modules",
+    "patches",
+    "preprocessor",
+    "scripts",
+    "src",
+    "test",
+    "*.sublime-workspace"
+  ],
+  "licenses": "WTFPL"
+}

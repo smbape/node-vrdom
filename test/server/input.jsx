@@ -1,0 +1,1 @@
+var el = <input type="text" value="some text" onChange={ (evt) => console.log(evt.target.value) } />;

@@ -1,0 +1,98 @@
+--- node_modules/istanbul/lib/instrumenter.ori.js	2017-01-29 21:59:31.635288000 +0100
++++ node_modules/istanbul/lib/instrumenter.js	2017-01-31 08:11:42.728338500 +0100
+@@ -745,7 +745,9 @@
+ 
+         ifBlockConverter: function (node) {
+             node.consequent = this.convertToBlock(node.consequent);
+-            node.alternate = this.convertToBlock(node.alternate);
++            if (!this.opts.keepIfStatement || !node.alternate) {
++                node.alternate = this.convertToBlock(node.alternate);
++            }
+         },
+ 
+         loopBlockConverter: function (node) {
+@@ -869,8 +871,17 @@
+ 
+         splice: function (statements, node, walker) {
+             var targetNode = walker.isLabeled() ? walker.parent().node : node;
+-            targetNode.prepend = targetNode.prepend || [];
+-            pushAll(targetNode.prepend, statements);
++            if (this.opts.keepIfStatement && targetNode.prepend === 'injectIfStatement') {
++                this.injectIfStatement(targetNode, statements);
++            } else {
++                targetNode.prepend = targetNode.prepend || [];
++                pushAll(targetNode.prepend, statements);
++            }
++
++            if (this.opts.keepCommentBlock && node.leadingComments) {
++                statements.leadingComments = node.leadingComments;
++                delete node.leadingComments;
++            }
+         },
+ 
+         functionName: function (node, line, location) {
+@@ -981,12 +992,63 @@
+                 thenBody = node.consequent.body,
+                 elseBody = node.alternate.body,
+                 child;
++
+             thenBody.unshift(astgen.statement(this.branchIncrementExprAst(bName, 0)));
+-            elseBody.unshift(astgen.statement(this.branchIncrementExprAst(bName, 1)));
++            var altBranchStatement = astgen.statement(this.branchIncrementExprAst(bName, 1));
++
++            if (this.opts.keepIfStatement) {
++                if (elseBody && elseBody.length === 0) {
++                    elseBody.unshift(altBranchStatement);
++
++                    // consequent has been added by instrument
++                    // keep the comment at the end of if statement
++                    if (this.opts.keepCommentBlock && node.consequent.trailingComments && !node.isElseIf) {
++                        node.alternate.trailingComments = node.consequent.trailingComments;
++                        delete node.consequent.trailingComments;
++                    }
++                } else if (node.alternate.type === SYNTAX.IfStatement.name) {
++                    node.alternate.isElseIf = true;
++                    node.alternate.prepend = 'injectIfStatement';
++                    this.injectIfStatement(node.alternate, altBranchStatement);
++                } else {
++                    elseBody.unshift(altBranchStatement);
++                }
++            } else {
++                elseBody.unshift(altBranchStatement);
++            }
++
+             if (ignoreThen) { child = node.consequent; child.preprocessor = this.startIgnore; child.postprocessor = this.endIgnore; }
+             if (ignoreElse) { child = node.alternate; child.preprocessor = this.startIgnore; child.postprocessor = this.endIgnore; }
+         },
+ 
++        injectIfStatement: function(node, statements) {
++            this.ifBlockConverter(node);
++
++            var clone = function(obj) {
++                var res = {};
++                for (var key in obj) {
++                    /* istanbul ignore else: has own property */
++                    if (obj.hasOwnProperty(key)) {
++                        res[key] = obj[key];
++                    }
++                }
++                return res;
++            };
++
++            var thenBody = node.consequent.body,
++                elseBody = node.alternate.body;
++
++            thenBody.unshift(statements);
++
++            if (elseBody && elseBody.length === 0) {
++                elseBody.unshift(statements);
++            } else if (node.alternate.type === SYNTAX.IfStatement.name) {
++                this.injectIfStatement(node.alternate, clone(statements));
++            } else {
++                elseBody.unshift(statements);
++            }
++        },
++
+         branchLocationFor: function (name, index) {
+             return this.coverState.branchMap[name].locations[index];
+         },

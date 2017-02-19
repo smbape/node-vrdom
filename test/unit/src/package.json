@@ -1,0 +1,25 @@
+{
+  "name": "vrdom-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stéphane MBAPE",
+  "license": "WTFPL",
+  "dependencies": {
+    "auto-reload-brunch": "^2.7.1",
+    "babel-plugin-syntax-flow": "^6.18.0",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-react-jsx": "^6.22.0",
+    "babel-preset-es2015-without-strict": "0.0.4",
+    "babel-preset-stage-0": "^6.22.0",
+    "babel-register": "^6.22.0",
+    "coffee-script-brunch": "^2.1.0",
+    "eslint-brunch": "^3.12.0",
+    "log4js": "^1.1.0",
+    "umd-builder": "^2.9.0"
+  }
+}

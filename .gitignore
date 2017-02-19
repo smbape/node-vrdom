@@ -1,0 +1,13 @@
+/build.log
+/bower_components
+/node_modules
+/npm-debug.log
+/test/unit/test-main.js
+/*.sublime-workspace
+/coverage
+/test/unit/src/bower_components
+/test/unit/src/node_modules
+/test/unit/src/public
+/test/unit/src/work
+/src/w3c/specifications
+/src/mdn/specifications

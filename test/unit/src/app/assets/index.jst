@@ -1,0 +1,97 @@
+<%
+    var require = root.require,
+        __dirname = root.__dirname,
+        __filename = root.__filename;
+
+    var fs = require('fs'),
+        sysPath = require('path'),
+        isAppBuild = root.build === 'app';
+
+    var computeOptimization = !root.optimize && !isAppBuild;
+%><!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Stéphane MBAPE">
+        <link rel="shortcut icon" href="favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <title>Buma</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.blue_grey-blue.min.css" />
+        <link rel="stylesheet" href="stylesheets/app.css">
+        <script type="text/javascript" src="vendor/modernizr-custom.js"></script>
+        <script type="text/javascript" src="node_modules/umd-core/src/path-browserify.js" data-requiremodule="umd-core/src/path-browserify"></script>
+        <script type="text/javascript" src="node_modules/umd-core/src/depsLoader.js" data-requiremodule="umd-core/src/depsLoader"></script>
+        <script type="text/javascript">
+            var appConfig = {baseUrl: '', build: '<%= root.build %>', isProduction: <%= root.optimize ? 'true' : 'false' %>};
+            (function() {
+                'use strict';
+
+                var timerInit = new Date().getTime(), lastDiff = 0;
+                appConfig.timerDiff = timerDiff;
+                appConfig.ready = ready;
+                appConfig.onRouteChangeSuccess = onRouteChangeSuccess;
+
+                document.addEventListener('start', onStart, false);
+                document.addEventListener('onRouteChangeSuccess', onRender, false);
+                
+                function onStart(evt) {
+                    document.removeEventListener('start', onStart);
+                    console.log('ready', timerDiff());
+                }
+
+                function onRender(evt) {
+                    document.removeEventListener('onRouteChangeSuccess', onRender);
+                    if (!window.rendered) {
+                        window.rendered = true;
+                        console.log('Initial onRouteChangeSuccess took', timerDiff());
+                    }
+                    console.log('onRouteChangeSuccess');
+                }
+
+                function timerDiff() {
+                    var newDiff = new Date().getTime() - timerInit,
+                        addDiff = newDiff - lastDiff;
+                    lastDiff = newDiff;
+                    return ['+' + addDiff, newDiff];
+                }
+
+                function ready() {
+                    var evt = document.createEvent("Event");
+                    evt.initEvent('start', true, true);
+                    document.dispatchEvent(evt);
+                }
+
+                function onRouteChangeSuccess() {
+                    var evt = document.createEvent("Event");
+                    evt.initEvent('onRouteChangeSuccess', true, true);
+                    document.dispatchEvent(evt);
+                }
+
+            }());
+        </script>
+    </head>
+    <body class="body">
+        <noscript>
+            <style type="text/css">
+                noscript {
+                    margin: auto;
+                    font-size: 24px
+                }
+            </style>
+            This website requires Javascript!
+        </noscript>
+        <% if (isAppBuild) { %>
+            <script type="text/javascript">appConfig.build = '<%= root.build %>';</script>
+            <script type="text/javascript" src="javascripts/vendor.js"></script>
+            <script type="text/javascript" src="javascripts/app.js"></script>
+            <script type="text/javascript">require("initialize");</script>
+        <% } else { %>
+            <script type="text/javascript" src="vendor/require.js"></script>
+            <script type="text/javascript" src="javascripts/main-dev.js"></script>
+        <% } %>
+    </body>
+</html>

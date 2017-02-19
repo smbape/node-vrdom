@@ -1,0 +1,14 @@
+--- test/unit/src/bower_components/preact-compat/preact-compat.ori.js	2017-02-09 18:33:03.739130200 +0100
++++ test/unit/src/bower_components/preact-compat/preact-compat.js	2017-02-10 01:00:08.399433400 +0100
+@@ -155,8 +155,9 @@
+ 
+ 	var out = preact.render(vnode, parent, prev);
+ 	if (parent) { parent._preactCompatRendered = out; }
+-	if (typeof callback==='function') { callback(); }
+-	return out && out._component || out.base;
++	var ret = out && out._component || out.base || out;
++	if (typeof callback === 'function') { callback.call(ret); }
++	return ret;
+ }
+ 
+ 
