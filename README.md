@@ -636,7 +636,7 @@ I launched my project tests and ... many failed (more than 50%):
   - The asynchonous update of the view after set state was not appropriate with my tests (partially fixed with preact.options.syncComponentUpdates = true)
   - Events were not unregistered after unmount
   - Did not worked with my dialogs
-  - Did not work with my integration of material-design-lite because node is already removed in componentWillMount
+  - Did not work with my integration of material-design-lite because node is already removed in componentWillUnmount
 
 ### Preact messes up with my component properties
 
