@@ -24,32 +24,40 @@ var vrdom = require("vrdom");
 }
 ```
 
-## Example
+### Example
+
+[jsfiddle](https://jsfiddle.net/smbape/adz7cgz4/)
 
 ```javascript
-let vrdom = require("vrdom");
+/** @jsx vrdom.createElement */
+
 let container = document.createElement("div");
 document.body.appendChild(container);
-let domNode = vrdom.render(<div>text</div>, container);
 
 class Component extends vrdom.Component {
-    render() {
-        return <div>text</div>;
-    }
+  render() {
+    return <div>COMPONENT</div>;
+  }
 }
-domNode = vrdom.render(<Component />, container);
 
 let ComponentClass = vrdom.createClass({
-    render() {
-        return <div>text</div>;
-    }
+  render() {
+    return <div>COMPONENT CLASS</div>;
+  }
 });
-domNode = vrdom.render(<ComponentClass />, container);
 
 function Stateless() {
-    return <div>text</div>;
+  return <div>STATELESS COMPONENT</div>;
 }
-domNode = vrdom.render(<Stateless />, container);
+
+vrdom.render(
+  <div>
+    <div>DOM</div>
+    <Component />
+    <ComponentClass />
+    <Stateless />
+  </div>
+, container);
 ```
 
 ## What is not in vrdom
@@ -69,11 +77,11 @@ Third party libraries can sometimes be painful to integrate with react.
 Hooks were created for that purpose.
 
 For example, to integrate [material design lite](https://getmdl.io/index.html)(MDL), some libraries specific to react have been created.  
-To use MDL, reading documetion is not enough, you also need to read those libraries specific to react.
+To use MDL, reading MDL documetion is not enough, you also need to read those libraries specific to react.
 
 With hooks, to integrate MDL, you can do
 
-[jsfiddle](https://jsfiddle.net/wq3qus91/1/)
+[jsfiddle](https://jsfiddle.net/smbape/tau61vvn/)
 
 ```javascript
 class MDLComponent extends vrdom.Component {
@@ -665,7 +673,7 @@ I was so pissed off that I started to create my own React.
 
 In conclusion, this library is an act of anger.
 
-Here is the [jsfiddle](https://jsfiddle.net/) with some bugs identified with preact.
+Here is the [jsfiddle](https://jsfiddle.net/smbape/fgoL2anv/) with some bugs identified with preact.
 
 # License
 
