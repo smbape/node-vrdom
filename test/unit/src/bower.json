@@ -18,7 +18,7 @@
     "preact": "^7.2.0",
     "preact-compat": "^3.13.1",
     "proptypes": "^0.14.4",
-    "qs": "git+https://github.com/hapijs/qs#^6.2.1",
+    "qs": "git+https://github.com/hapijs/qs#^6.3.1",
     "react": "^15.4.2"
   },
   "overrides": {

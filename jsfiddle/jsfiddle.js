@@ -22,7 +22,7 @@
         "https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js",
 
         // material-design-lite
-        // "https://code.getmdl.io/1.3.0/material.indigo-pink.min.css",
+        "https://code.getmdl.io/1.3.0/material.indigo-pink.min.css",
         "https://code.getmdl.io/1.3.0/material.min.js",
 
         // vrdom
