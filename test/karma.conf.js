@@ -1,7 +1,7 @@
 require("./fixes");
 
 var sysPath = require("path");
-var coverage = /1|true|on|TRUE|ON/.test(String(process.env.COVERAGE));
+var coverage = /^(?:1|true|on|TRUE|ON)$/.test(String(process.env.COVERAGE));
 var envPreprocessor = coverage ? ["COVERAGE"] : [];
 envPreprocessor.push.apply(envPreprocessor, Object.keys(process.env).filter(function(name) {
     return name.slice(0, "TEST_".length) === "TEST_";

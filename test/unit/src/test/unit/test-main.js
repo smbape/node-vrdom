@@ -16,6 +16,7 @@
             lodash: '../bower_components/lodash/dist/lodash',
             'material-design-lite': '../bower_components/material-design-lite/material',
             'preact-compat': '../bower_components/preact-compat/preact-compat',
+            qs: '../bower_components/qs/dist/qs',
             react: '../bower_components/react/react.min',
             'react-dom': '../bower_components/react/react-dom.min'
         },
@@ -39,6 +40,7 @@
             'lodash',
             'material-design-lite',
             'preact-compat',
+            'qs',
             'react'
         ],
         map: {
@@ -50,6 +52,7 @@
                 '../bower_components/lodash/dist/lodash': 'lodash',
                 '../bower_components/material-design-lite/material': 'material-design-lite',
                 '../bower_components/preact-compat/preact-compat': 'preact-compat',
+                '../bower_components/qs/dist/qs': 'qs',
                 '../bower_components/react/react.min': 'react',
                 '../bower_components/react/react-dom.min': 'react-dom'
             }

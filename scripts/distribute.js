@@ -6,7 +6,7 @@ var _ = require("lodash");
 var anyspawn = require("anyspawn");
 
 module.exports = function(options, done) {
-    var coverage = /1|true|on|TRUE|ON/.test(String(process.env.COVERAGE));
+    var coverage = /^(?:1|true|on|TRUE|ON)$/.test(String(process.env.COVERAGE));
 
     if ("function" === typeof options) {
         done = options;
