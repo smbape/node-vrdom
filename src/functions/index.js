@@ -2,9 +2,7 @@ module.exports = {
     /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
     createStringTemplate: require("./createStringTemplate"),
     formatArgument: require("./formatArgument"),
-    getDisplayName: require("./getDisplayName"),
     getDisplayRender: require("./getDisplayRender"),
-    getFunctionName: require("./getFunctionName"),
     /// #endif
     assign: require("./assign"),
     attachRef: require("./attachRef"),
@@ -15,6 +13,8 @@ module.exports = {
     flattenChildrenToString: require("./flattenChildrenToString"),
     flattenChildren: require("./flattenChildren"),
     getCanonicalKey: require("./getCanonicalKey"),
+    getDisplayName: require("./getDisplayName"),
+    getFunctionName: require("./getFunctionName"),
     getIteratorMethod: require("./getIteratorMethod"),
     getKeyAndPrefixFromCanonicalKey: require("./getKeyAndPrefixFromCanonicalKey"),
     getVNodeFromMap: require("./getVNodeFromMap"),

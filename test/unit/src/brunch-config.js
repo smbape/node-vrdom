@@ -19,7 +19,7 @@ function ignore(path) {
     return config.conventions.vendor(path) || externalMatcher.test(path);
 }
 
-var sources = ["src", "vrdom-compat"].map(function(path) {
+var sources = ["src", "vrdom-compat", "devtools"].map(function(path) {
     return sysPath.join(projectRoot, path);
 });
 var sourcesReg = new RegExp(matcher(sources).source + /[/\\]/.source);

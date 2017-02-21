@@ -13,6 +13,8 @@ var functions = require("./functions"),
     setExpandoData = functions.setExpandoData,
     uniqueId = functions.uniqueId;
 
+var callVNodeHooks = require("./hooks").callVNodeHooks;
+
 /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
 var translator = require("./messages/translator");
 /// #endif
@@ -408,38 +410,40 @@ function processRendered(renderedCheckpoint) {
     var rendered = Renderer._rendered.slice(renderedCheckpoint);
     Renderer._rendered.length = renderedCheckpoint;
 
-    var args, widget, method, component, callbacks;
+    var args, vnode, method, component, callbacks;
 
     for (var i = 0, len = rendered.length, lastIndex = len - 1; i < len; i++) {
         args = rendered[i];
-        widget = args[0];
+        vnode = args[0];
         method = args[1];
         args = args[2];
 
-        component = widget.getInstance(Renderer.renderOptions);
-
         if (method) {
-            method = widget[method];
-            method.apply(widget, args);
+            if (vnode[method]) {
+                vnode[method].apply(vnode, args);
+            }
+
+            callVNodeHooks(method, vnode);
         }
 
-        if (widget.callbacks) {
-            callbacks = widget.callbacks;
-            widget.callbacks = undefined;
+        if (vnode.callbacks) {
+            callbacks = vnode.callbacks;
+            vnode.callbacks = undefined;
+            component = vnode.getInstance(Renderer.renderOptions);
 
             for (var j = 0, lenj = callbacks.length; j < lenj; j++) {
                 executeCallback(callbacks[j], component);
             }
         }
 
-        widget.cycle = false;
+        vnode.cycle = false;
 
         if (i !== lastIndex) {
-            processWidgetPendingState(widget);
+            processWidgetPendingState(vnode);
         }
     }
 
-    return widget;
+    return vnode;
 }
 
 function processWidgetPendingState(widget) {

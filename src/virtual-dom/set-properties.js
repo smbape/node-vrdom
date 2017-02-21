@@ -59,13 +59,13 @@ function setProperties(vnode, node, nextProps, prevProps) {
 
         if (hasProp.call(controls.onChange, type) && !hasProp.call(prevProps, "onChange")) {
             // controll value even if there is no onChange prop
-            removeEventListener(type, prevProps, node, "Change", false);
+            removeEventListener(type, prevProps, node, "Change");
         }
 
         // remove event listeners
         for (propName in prevProps) {
             if (EVENT_ATTR_REG.test(propName)) {
-                removeEventListener(type, prevProps, node, propName.slice(2), false);
+                removeEventListener(type, prevProps, node, propName.slice(2));
             }
         }
 
@@ -73,7 +73,7 @@ function setProperties(vnode, node, nextProps, prevProps) {
         if (hasProp.call(localEvents, type)) {
             // eslint-disable-next-line guard-for-in
             for (eventName in localEvents[type]) {
-                removeEventListener(type, prevProps, node, eventName, true);
+                removeEventListener(type, prevProps, node, eventName);
             }
         }
 
@@ -421,7 +421,7 @@ function addEventListener(type, nextProps, node, eventName, value, local) {
     }
 }
 
-function removeEventListener(type, props, node, eventName, local) {
+function removeEventListener(type, props, node, eventName) {
     var inst, data;
 
     var context = EMPTY_OBJECT;

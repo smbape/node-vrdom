@@ -19,7 +19,7 @@ var testCommand = "node node_modules/karma/bin/karma start test/karma.conf.js";
 
 var commands = {
     prepublish: "node scripts/prepublish.js",
-    lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"test/unit/src/app/node_modules/tests/**/*.js\" \"test/unit/src/app/node_modules/Triggers.js\"",
+    lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"devtool/**/*.js\" \"test/unit/src/app/node_modules/tests/**/*.js\" \"test/unit/src/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
 
     "build-only": function(next) {
@@ -147,6 +147,9 @@ commands["test-cover-browsers"] = function(next) {
         function(next) {
             var rimraf = require("rimraf");
             rimraf(sysPath.join(__dirname, "coverage"), next);
+        },
+        function(next) {
+            mkdirp(sysPath.join(__dirname, "coverage"), next);
         }, [
             testCommand,
             "--single-run",

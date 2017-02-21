@@ -29,6 +29,7 @@ function createNode(vnode, opts) {
         domNode = vnode.init();
     } else if (vnode.isVText) {
         domNode = doc.createTextNode(vnode.text);
+        Renderer._rendered.push([vnode, "componentDidMount", []]);
     } else if (vnode.isVNode) {
         var namespace = vnode.namespace;
         var tagName = vnode.tagName;
@@ -75,7 +76,7 @@ function createNode(vnode, opts) {
         });
 
         Renderer._afterUpdates[vnode.key] = true;
-        Renderer._rendered.push([vnode, "componentDidMount", [opts]]);
+        Renderer._rendered.push([vnode, "componentDidMount", []]);
     }
 
     updateNodeMap(null, vnode, domNode, nodeMap);

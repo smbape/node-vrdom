@@ -326,6 +326,7 @@ function toVNodeArgs(type, config) {
 }
 
 assign(exports, {
+    nodeMap: nodeMap,
     isValidElement: functions.isValidElement,
     render: Renderer.render,
     findDOMNode: Renderer.findDOMNode,

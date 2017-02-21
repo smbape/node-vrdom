@@ -201,7 +201,7 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
         this.prevState = prevState;
         this.prevContext = prevContext;
 
-        if (willReceive) {
+        if (willReceive || pendingMethod === "forceUpdate") {
             component.props = nextProps;
         }
         component.state = nextState;

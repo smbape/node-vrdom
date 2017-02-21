@@ -188,10 +188,18 @@ function hasHooks(type, name) {
     return getHooks(type, name, true);
 }
 
+function callVNodeHooks(name, vnode) {
+    var fns = getHooks(name, vnode.type).concat(getHooks(name));
+    for (var i = 0, len = fns.length; i < len; i++) {
+        fns[i](vnode);
+    }
+}
+
 module.exports = {
     appendHook: appendHook,
     prependHook: prependHook,
     removeHook: removeHook,
     getHooks: getHooks,
-    hasHooks: hasHooks
+    hasHooks: hasHooks,
+    callVNodeHooks: callVNodeHooks
 };

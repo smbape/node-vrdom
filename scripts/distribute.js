@@ -3,7 +3,6 @@
 var sysPath = require("path");
 var webpack = require("./webpack");
 var _ = require("lodash");
-var qs = require("querystring");
 var anyspawn = require("anyspawn");
 
 module.exports = function(options, done) {
@@ -33,7 +32,8 @@ module.exports = function(options, done) {
     var allTasks = tasks("development", "-dev", options).concat(tasks("production", "", options));
     allTasks.push.apply(allTasks, [
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom.js --source-map dist/vrdom.min.map --in-source-map dist/vrdom.map -o dist/vrdom.min.js --compress --mangle",
-        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.map --in-source-map dist/vrdom-compat.map -o dist/vrdom-compat.min.js --compress --mangle"
+        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.map --in-source-map dist/vrdom-compat.map -o dist/vrdom-compat.min.js --compress --mangle",
+        "node node_modules/uglify-js/bin/uglifyjs dist/devtools.js --source-map dist/devtools.min.map --in-source-map dist/devtools.map -o dist/devtools.min.js --compress --mangle"
     ]);
 
     anyspawn.spawnSeries(allTasks, {
@@ -45,38 +45,35 @@ module.exports = function(options, done) {
 };
 
 function tasks(NODE_ENV, suffix, options) {
-    var ifdefQuery = qs.encode({
-        env: JSON.stringify({
+    var preprocessLoader = require.resolve("../preprocessor/webpack-loader") + "?" + JSON.stringify({
+        env: {
             NODE_ENV: NODE_ENV
-        })
+        }
     });
-
-    var preprocessLoader = require.resolve("../preprocessor/webpack-loader") + "?" + ifdefQuery;
 
     var loaders = getLoaders(preprocessLoader);
 
     var entries = {
         vrdom: sysPath.join(__dirname, "..", "src", "vrdom.js"),
-        "vrdom-compat": sysPath.join(__dirname, "..", "vrdom-compat", "vrdom-compat.js")
+        "vrdom-compat": sysPath.join(__dirname, "..", "vrdom-compat", "vrdom-compat.js"),
+        "devtools": sysPath.join(__dirname, "..", "devtools", "devtools.js")
     };
 
     var tasks = [];
     addPackTasks(entries, suffix, loaders, tasks);
 
     if (options.coverage) {
-        var ispartaLoader = require.resolve("./isparta-loader") + "?" + qs.encode({
-            options: JSON.stringify({
-                instrumenter: {
-                    embedSource: true,
-                    noAutoWrap: true,
-                    babel: "inherit",
-                    preserveComments: true,
-                    keepIfStatement: true,
-                    keepCommentBlock: true,
-                    // noCompact: true,
-                },
-                include: /[/\\]src[/\\]/.source
-            })
+        var ispartaLoader = require.resolve("./isparta-loader") + "?" + JSON.stringify({
+            instrumenter: {
+                embedSource: true,
+                noAutoWrap: true,
+                babel: "inherit",
+                preserveComments: true,
+                keepIfStatement: true,
+                keepCommentBlock: true,
+                // noCompact: true,
+            },
+            include: /[/\\]src[/\\]/.source
         });
 
         loaders = getLoaders(preprocessLoader, ispartaLoader);
@@ -97,7 +94,33 @@ function addPackTasks(entries, suffix, loaders, tasks) {
 }
 
 function getLoaders(preprocessLoader, ispartaLoader) {
-    var jsLoaders = [preprocessLoader, "babel-loader"];
+    var query = JSON.stringify({
+        "plugins": [
+            "transform-es2015-template-literals",
+            "transform-es2015-literals",
+            "transform-es2015-function-name",
+            "transform-es2015-arrow-functions",
+            "transform-es2015-block-scoped-functions",
+            "transform-es2015-classes",
+            "transform-es2015-object-super",
+            "transform-es2015-shorthand-properties",
+            "transform-es2015-duplicate-keys",
+            "transform-es2015-computed-properties",
+            "transform-es2015-for-of",
+            "transform-es2015-sticky-regex",
+            "transform-es2015-unicode-regex",
+            "check-es2015-constants",
+            "transform-es2015-spread",
+            "transform-es2015-parameters",
+            "transform-es2015-destructuring",
+            "transform-es2015-block-scoping",
+            // "transform-es2015-typeof-symbol",
+            ["transform-es2015-modules-commonjs", {strict : false}],
+            ["transform-regenerator", { async: false, asyncGenerators: false }]
+        ]
+    });
+
+    var jsLoaders = [preprocessLoader, "babel-loader?" + query];
 
     if (ispartaLoader) {
         jsLoaders.push(ispartaLoader);
@@ -125,7 +148,11 @@ function pack(name, suffix, entry, loaders, options, done) {
             filename: name + suffix + ".js",
             library: camelize(name + suffix),
             libraryTarget: "umd",
-            sourceMapFilename: name + suffix + ".map"
+            sourceMapFilename: name + suffix + ".map",
+            devtoolModuleFilenameTemplate: function devtoolModuleFilenameTemplate(obj){
+                var resourcePath = obj.resourcePath.replace(/(^|[/\\])(?:([^/\\]+)(\.[^/\\.]+)|([^/\\]+))$/, "$1$2$4" + suffix + "$3");
+                return "webpack:///" + resourcePath;
+            }
         },
         module: {
             loaders: loaders
@@ -141,7 +168,7 @@ function pack(name, suffix, entry, loaders, options, done) {
     }, options);
 
     webpack(options, function() {
-        console.log("");
+        console.log("\n");
         done.apply(null, arguments);
     });
 }

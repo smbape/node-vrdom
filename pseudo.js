@@ -20,7 +20,6 @@ https://www.w3.org/TR/SVG/struct.html
 https://angular.io/docs/ts/latest/guide/learning-angular.html
 https://github.com/developit/preact
 
-Developper Tool: I have never used it, therefore I cannot implement one
 Performance Tool: I have never used it, therefore I cannot implement one
 Addons: I have never used them, therefore I cannot implement one
 

@@ -1,18 +1,20 @@
+"use strict";
+
 var url = require("url");
-var qs = require("querystring");
+var loaderUtils = require("loader-utils");
 var preprocess = require("./Parser").preprocess;
 
 module.exports = function(source, map) {
     var env, options;
 
-    if (this.query) {
-        var query = qs.parse(url.parse(this.query).query);
-        if (query.env) {
-            env = JSON.parse(query.env);
+    var loaderOptions = this.query ? loaderUtils.parseQuery(this.query) : null;
+    if (loaderOptions) {
+        if (loaderOptions.env) {
+            env = loaderOptions.env;
         }
 
-        if (query.options) {
-            options = JSON.parse(query.options);
+        if (loaderOptions.options) {
+            options = loaderOptions.options;
         }
     }
 

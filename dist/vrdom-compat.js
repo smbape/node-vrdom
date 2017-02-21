@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var PureRenderMixin = {
-	    shouldComponentUpdate: function (nextProps, nextState) {
+	    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
 	        return !isEqual(this.props, nextProps, true, 1) || !isEqual(this.state, nextState, true, 1);
 	    }
 	};

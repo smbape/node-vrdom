@@ -15,6 +15,7 @@ var isObject = functions.isObject;
 var updateNodeMap = functions.updateNodeMap;
 
 var Renderer = require("../Renderer");
+var callVNodeHooks = require("../hooks").callVNodeHooks;
 
 function updateTree(a, b, renderOptions, context) {
     if (a === b) {
@@ -35,8 +36,9 @@ function updateTree(a, b, renderOptions, context) {
         return a;
     }
 
+    var placeholder;
     if (a.type !== b.type) {
-        var placeholder = new VirtualText("");
+        placeholder = new VirtualText("");
         placeholder.key = a.key;
         placeholder.prefix = a.prefix;
         placeholder.originalKey = a.originalKey;
@@ -48,8 +50,7 @@ function updateTree(a, b, renderOptions, context) {
 
     if (b.isVText) {
         if (a.text !== b.text) {
-            updateVText(a, b, renderOptions);
-            return b;
+            return updateVText(a, b, renderOptions, !placeholder);
         }
 
         return a;
@@ -65,6 +66,10 @@ function updateTree(a, b, renderOptions, context) {
         return replaceVTextWithVNode(a, b, renderOptions, context);
     }
 
+    return updateVNode(a, b, renderOptions, context);
+}
+
+function updateVNode(a, b, renderOptions, context) {
     var hasChanged = false;
 
     if (a.ref !== b.ref) {
@@ -143,6 +148,8 @@ function updateTree(a, b, renderOptions, context) {
 }
 
 function destroyChildren(vnode, placeholder, renderOptions) {
+    callVNodeHooks("componentWillUnmount", vnode);
+
     if (vnode.isVNode) {
         setProperties(vnode, vnode.node, null, vnode.props);
 
@@ -236,7 +243,6 @@ function updateChildren(a, aChildren, bChildren, renderOptions, context) {
     }
 
     if (hasChanged) {
-        removeRemainingNodes(a, childrenLen, renderOptions);
         a.children = bChildren;
     }
 
@@ -277,13 +283,23 @@ function insertNode(nextVNode, referenceVNodeIndex, parentVNode, renderOptions) 
     updateNodeMap(null, nextVNode, nextNode, renderOptions.nodeMap);
 }
 
-function updateVText(prevVNode, nextVText, renderOptions) {
+function updateVText(prevVNode, nextVText, renderOptions, isUpdate) {
     var prevNode = prevVNode.node;
-    var nextNode;
+    var prevText = prevVNode.text;
+    var nextText = nextVText.text;
 
-    prevNode.replaceData(0, prevNode.length, nextVText.text);
-    nextNode = prevNode;
-    updateNodeMap(prevVNode, nextVText, nextNode, renderOptions.nodeMap);
+    prevNode.replaceData(0, prevNode.length, nextText);
+
+    if (isUpdate) {
+        prevVNode.text = nextText;
+        Renderer._rendered.push([prevVNode, "componentDidUpdate", [prevText]]);
+    } else {
+        updateNodeMap(prevVNode, nextVText, prevNode, renderOptions.nodeMap);
+        prevVNode = nextVText;
+        Renderer._rendered.push([prevVNode, "componentDidMount", []]);
+    }
+
+    return prevVNode;
 }
 
 function updateWidget(prevVNode, nextElement, renderOptions, context) {
@@ -346,15 +362,6 @@ function moveNode(vnode, at, parentVNode) {
         }
     } else {
         parentNode.appendChild(domNode);
-    }
-}
-
-function removeRemainingNodes(vnode, from) {
-    var domNode = vnode.node;
-    var childNodes = domNode.childNodes;
-
-    for (var i = childNodes.length - 1; i >= from; i--) {
-        domNode.removeChild(childNodes[i]);
     }
 }
 
