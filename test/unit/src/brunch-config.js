@@ -1,6 +1,6 @@
 var sysPath = require("path"),
     _ = require("lodash"),
-    distribute = require("../../../scripts/distribute");
+    anyspawn = require("anyspawn");
 
 var slice = Array.prototype.slice;
 
@@ -8,7 +8,8 @@ var ref = require("umd-builder/lib/brunch-config"),
     matcher = ref.matcher,
     config = ref.config;
 
-var projectRoot = sysPath.resolve(__dirname, "..", "..", "..").replace(/[/\\]/g, "/");
+var rootpath = sysPath.resolve(__dirname, "..", "..", "..");
+var projectRoot = rootpath.replace(/[/\\]/g, "/");
 projectRoot = sysPath.relative(process.cwd(), projectRoot);
 
 var dist = sysPath.join(projectRoot, "dist");
@@ -47,7 +48,13 @@ function initDistribution() {
 
         working = true;
 
-        distribute(function() {
+        var cwd = process.cwd();
+
+        anyspawn.exec("node cli.js distribute", {
+            cwd: rootpath,
+            prompt: false,
+            stdio: "inherit"
+        }, function() {
             if (!distributionReady) {
                 distributionReady = true;
             }

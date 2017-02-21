@@ -4,6 +4,7 @@ var sysPath = require("path");
 var webpack = require("./webpack");
 var _ = require("lodash");
 var anyspawn = require("anyspawn");
+var rootpath = sysPath.resolve(__dirname, "..");
 
 module.exports = function(options, done) {
     var coverage = /^(?:1|true|on|TRUE|ON)$/.test(String(process.env.COVERAGE));
@@ -39,7 +40,7 @@ module.exports = function(options, done) {
     anyspawn.spawnSeries(allTasks, {
         stdio: "inherit",
         env: process.env,
-        cwd: sysPath.join(__dirname, ".."),
+        cwd: rootpath,
         // prompt: anyspawn.defaults.prompt
     }, done);
 };
@@ -54,9 +55,9 @@ function tasks(NODE_ENV, suffix, options) {
     var loaders = getLoaders(preprocessLoader);
 
     var entries = {
-        vrdom: sysPath.join(__dirname, "..", "src", "vrdom.js"),
-        "vrdom-compat": sysPath.join(__dirname, "..", "vrdom-compat", "vrdom-compat.js"),
-        "devtools": sysPath.join(__dirname, "..", "devtools", "devtools.js")
+        vrdom: sysPath.join(rootpath, "src", "vrdom.js"),
+        "vrdom-compat": sysPath.join(rootpath, "vrdom-compat", "vrdom-compat.js"),
+        "devtools": sysPath.join(rootpath, "devtools", "devtools.js")
     };
 
     var tasks = [];
@@ -144,7 +145,7 @@ function pack(name, suffix, entry, loaders, options, done) {
         },
         entry: entry,
         output: {
-            path: sysPath.join(__dirname, "..", "dist"),
+            path: sysPath.join(rootpath, "dist"),
             filename: name + suffix + ".js",
             library: camelize(name + suffix),
             libraryTarget: "umd",

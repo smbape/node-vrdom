@@ -8,6 +8,7 @@ var testClientRoot = sysPath.join(__dirname, "test", "unit", "src");
 var mkdirp = require("mkdirp");
 var deepExtend = require("deep-extend");
 var request = require("request");
+var distribute = require("./scripts/distribute");
 
 var opts = {
     stdio: "inherit",
@@ -18,7 +19,7 @@ var opts = {
 var testCommand = "node node_modules/karma/bin/karma start test/karma.conf.js";
 
 var commands = {
-    prepublish: "node scripts/prepublish.js",
+    prepublish: distribute,
     lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"devtool/**/*.js\" \"test/unit/src/app/node_modules/tests/**/*.js\" \"test/unit/src/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
 
