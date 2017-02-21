@@ -6672,6 +6672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        placeholder.originalKey = a.originalKey;
 	        placeholder.context = a.context;
 	        placeholder.childContext = a.childContext;
+	        placeholder.parent = a.parent;
 	
 	        a = destroyChildren(a, placeholder, renderOptions);
 	    }

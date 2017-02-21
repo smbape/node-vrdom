@@ -10,9 +10,6 @@ const vrdom = require("vrdom"),
     hasProp = functions.hasProp,
     hooks = vrdom.hooks;
 
-let _domID = 1;
-let _rootNodeID = 1;
-
 /**
  * Transform a virtual node to a ReactDOMComponent compatible object
  * 
@@ -22,18 +19,6 @@ let _rootNodeID = 1;
  * @return {ReactInternalInstance}                   Transformed object
  */
 function toReactDOMComponent(vnode, inst) {
-    if (inst == null) {
-        inst = {};
-    }
-
-    if (!inst._rootNodeID) {
-        inst._rootNodeID = _rootNodeID++;
-    }
-
-    if (!inst._domID) {
-        inst._domID = _domID++;
-    }
-
     let _tag = vnode.type;
     let _currentElement = vnode.element;
     let children = vnode.children;
@@ -53,23 +38,9 @@ function toReactDOMComponent(vnode, inst) {
             return _tag;
         },
         _currentElement: _currentElement,
-        // _tag: _tag,
-        // _flags: _renderedChildren && _renderedChildren.length !== 0 ? 1 : 0,
-        // _namespaceURI: _hostNode.namespaceURI,
         _hostNode: _hostNode,
-        // _hostContainerInfo: getHostContainerInfo(vnode),
-        // _hostParent: toReactComponent(vnode.parent, true),
         _renderedChildren: _renderedChildren,
 
-        // _mountImage: null,
-        // _mountIndex: getMountIndex(vnode),
-
-        // --- Additional properties used by vrdom devtools
-
-        // A flag indicating whether the devtools have been notified about the
-        // existence of this component instance yet.
-        // This is used to send the appropriate notifications when DOM components
-        // are added or updated between composite component updates.
         _inDevTools: false,
         vnode: vnode
     });
@@ -87,29 +58,11 @@ function toReactDOMComponent(vnode, inst) {
  * @return {ReactInternalInstance}                   Transformed object
  */
 function toReactTextComponent(vnode, inst) {
-    if (inst == null) {
-        inst = {};
-    }
-
-    if (!inst._domID) {
-        inst._domID = _domID++;
-    }
-
     Object.assign(inst, {
         _currentElement: vnode.text,
         _stringText: vnode.text,
         _hostNode: vnode.node,
-        // _hostContainerInfo: getHostContainerInfo(vnode),
 
-        // _mountImage: null,
-        // _mountIndex: getMountIndex(vnode),
-
-        // --- Additional properties used by vrdom devtools
-
-        // A flag indicating whether the devtools have been notified about the
-        // existence of this component instance yet.
-        // This is used to send the appropriate notifications when DOM components
-        // are added or updated between composite component updates.
         _inDevTools: false,
         vnode: vnode
     });
@@ -126,14 +79,6 @@ function toReactTextComponent(vnode, inst) {
  * @return {ReactInternalInstance}                   Transformed object
  */
 function toReactCompositeComponent(vnode, inst) {
-    if (inst == null) {
-        inst = {};
-    }
-
-    if (!inst._rootNodeID) {
-        inst._rootNodeID = _rootNodeID++;
-    }
-
     // forceUpdate set _currentElement
     if (!hasProp.call(inst, "_currentElement")) {
         Object.defineProperty(inst, "_currentElement", {
@@ -171,20 +116,11 @@ function toReactCompositeComponent(vnode, inst) {
         getName() {
             return name;
         },
-        // _compositeType: isStateless ? 2 : 1,
         _hostNode: vnode.node,
-        // _hostParent: toReactComponent(vnode.parent, true),
         _context: _context,
-
-        // _mountImage: null,
-        // _mountIndex: getMountIndex(vnode),
-
         _instance: _instance,
-        // _hostContainerInfo: getHostContainerInfo(vnode),
         _renderedComponent: toReactComponent(vnode.thunk.vnode),
-        // _renderedNodeType: vnode.thunk.vnode.isWidget && vnode.thunk.vnode._type === "Stateless" ? 2 : 1,
 
-        // --- Additional properties used by vrdom devtools
         vnode: vnode
     });
 
@@ -294,11 +230,11 @@ function toReactComponent(vnode, noUpdate) {
 
     let inst;
 
-    if (instanceMap.has(vnode)) {
-        inst = instanceMap.get(vnode);
+    if (instanceMap.has(vnode.key)) {
+        inst = instanceMap.get(vnode.key);
     } else {
         inst = {};
-        instanceMap.set(vnode, inst);
+        instanceMap.set(vnode.key, inst);
     }
 
     if (vnode.isWidget) {
@@ -312,55 +248,6 @@ function toReactComponent(vnode, noUpdate) {
     vnode._reactInternalInstance = inst;
     return inst;
 }
-
-// function getMountIndex(vnode) {
-//     let parent = vnode.parent;
-//     if (!parent || !parent.isVNode) {
-//         return 0;
-//     }
-
-//     let children = parent.children;
-//     let index = 0;
-//     for (let key in children) {
-//         if (children[key] === vnode) {
-//             break;
-//         }
-//         index++;
-//     }
-
-//     return index;
-// }
-
-// function getHostContainerInfo(vnode) {
-//     while (vnode.parent) {
-//         vnode = vnode.parent;
-//     }
-
-//     const container = vnode.node.parentNode;
-//     if (!container) {
-//         return null;
-//     }
-
-//     const expandoData = container[expando];
-//     if (!expandoData) {
-//         return null;
-//     }
-
-//     if (hasProp.call(expandoData, "_hostContainerInfo")) {
-//         return expandoData._hostContainerInfo;
-//     }
-
-//     expandoData._hostContainerInfo = {
-//         _idCounter: 1,
-//         _ownerDocument: container.ownerDocument,
-//         _node: container,
-//         _tag: container.nodeName.toLowerCase(),
-//         _namespaceURI: container.namespaceURI
-//     };
-
-//     return expandoData._hostContainerInfo;
-// }
-
 /**
  * Find all root component instances rendered by vrdom in `node`'s children
  * and add them to the `roots` map.
@@ -454,7 +341,6 @@ function createDevToolsBridge() {
         }
     };
 
-    /** Notify devtools that a new vnode instance has been mounted into the DOM. */
     const componentDidMount = vnode => {
         if (isRootVNode(vnode)) {
             toReactTopLevelWrapper(vnode, roots, Mount, Reconciler);
@@ -464,10 +350,9 @@ function createDevToolsBridge() {
         toReactWrapper(vnode, Mount, Reconciler);
     };
 
-    /** Notify devtools that a vnode has been updated with new props/state. */
     const componentDidUpdate = vnode => {
         const prevRenderedChildren = [];
-        visitNonCompositeChildren(instanceMap.get(vnode), childInst => {
+        visitNonCompositeChildren(instanceMap.get(vnode.key), childInst => {
             prevRenderedChildren.push(childInst);
         });
 
@@ -499,7 +384,6 @@ function createDevToolsBridge() {
         });
     };
 
-    /** Notify devtools that a vnode has been unmounted from the DOM. */
     const componentWillUnmount = vnode => {
         let instance = toReactComponent(vnode);
 
@@ -512,7 +396,7 @@ function createDevToolsBridge() {
 
         Reconciler.unmountComponent(instance);
 
-        instanceMap.delete(vnode);
+        instanceMap.delete(vnode.key);
         if (instance._rootID) {
             delete roots[instance._rootID];
         }
