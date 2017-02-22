@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("vrdomDevCov"));
+		module.exports = factory(require("vrdomDev"));
 	else if(typeof define === 'function' && define.amd)
-		define(["vrdom-dev-cov"], factory);
+		define(["vrdom-dev"], factory);
 	else if(typeof exports === 'object')
-		exports["vrdomDevtoolsDevCov"] = factory(require("vrdomDevCov"));
+		exports["vrdomDevtoolsRegisterDev"] = factory(require("vrdomDev"));
 	else
-		root["vrdomDevtoolsDevCov"] = factory(root["vrdomDevCov"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+		root["vrdomDevtoolsRegisterDev"] = factory(root["vrdomDev"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -54,6 +54,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1).register();
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
@@ -73,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/* eslint-disable valid-jsdoc, no-empty-function */
 	
-	var vrdom = __webpack_require__(1),
+	var vrdom = __webpack_require__(2),
 	    expando = vrdom.expando,
 	    nodeMap = vrdom.nodeMap,
 	    functions = vrdom.functions,
@@ -588,13 +594,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ }
 /******/ ])
 });
 ;
-//# sourceMappingURL=vrdom-devtools-dev-cov.map
+//# sourceMappingURL=vrdom-devtools-register-dev.map

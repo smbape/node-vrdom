@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("vrdomCov"));
+		module.exports = factory(require("vrdom"));
 	else if(typeof define === 'function' && define.amd)
-		define(["vrdom-cov"], factory);
+		define(["vrdom"], factory);
 	else if(typeof exports === 'object')
-		exports["vrdomDevtoolsCov"] = factory(require("vrdomCov"));
+		exports["vrdomDevtoolsRegister"] = factory(require("vrdom"));
 	else
-		root["vrdomDevtoolsCov"] = factory(root["vrdomCov"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+		root["vrdomDevtoolsRegister"] = factory(root["vrdom"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -54,6 +54,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1).register();
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
@@ -73,7 +79,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/* eslint-disable valid-jsdoc, no-empty-function */
 	
-	var vrdom = __webpack_require__(1),
+	var vrdom = __webpack_require__(2),
 	    expando = vrdom.expando,
 	    nodeMap = vrdom.nodeMap,
 	    functions = vrdom.functions,
@@ -588,13 +594,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 1 */
+/* 2 */
 /***/ function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 /***/ }
 /******/ ])
 });
 ;
-//# sourceMappingURL=vrdom-devtools-cov.map
+//# sourceMappingURL=vrdom-devtools-register.map

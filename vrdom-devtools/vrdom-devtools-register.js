@@ -1,0 +1,1 @@
+require("./vrdom-devtools").register();

@@ -5,6 +5,7 @@ var webpack = require("./webpack");
 var _ = require("lodash");
 var anyspawn = require("anyspawn");
 var rootpath = sysPath.resolve(__dirname, "..");
+var push = Array.prototype.push;
 
 module.exports = function(options, done) {
     var coverage = /^(?:1|true|on|TRUE|ON)$/.test(String(process.env.COVERAGE));
@@ -26,12 +27,12 @@ module.exports = function(options, done) {
         };
     }
 
-    if (options.coverage === (void 0)) {
+    if (options.coverage === undefined) {
         options.coverage = coverage;
     }
 
     var allTasks = tasks("development", "-dev", options).concat(tasks("production", "", options));
-    allTasks.push.apply(allTasks, [
+    push.apply(allTasks, [
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom.js --source-map dist/vrdom.min.map --in-source-map dist/vrdom.map -o dist/vrdom.min.js --compress --mangle",
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.map --in-source-map dist/vrdom-compat.map -o dist/vrdom-compat.min.js --compress --mangle",
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-devtools.js --source-map dist/vrdom-devtools.min.map --in-source-map dist/vrdom-devtools.map -o dist/vrdom-devtools.min.js --compress --mangle"
@@ -57,7 +58,8 @@ function tasks(NODE_ENV, suffix, options) {
     var entries = {
         vrdom: sysPath.join(rootpath, "src", "vrdom.js"),
         "vrdom-compat": sysPath.join(rootpath, "vrdom-compat", "vrdom-compat.js"),
-        "vrdom-devtools": sysPath.join(rootpath, "vrdom-devtools", "vrdom-devtools.js")
+        "vrdom-devtools": sysPath.join(rootpath, "vrdom-devtools", "vrdom-devtools.js"),
+        "vrdom-devtools-register": sysPath.join(rootpath, "vrdom-devtools", "vrdom-devtools-register.js")
     };
 
     var tasks = [];
@@ -87,9 +89,24 @@ function tasks(NODE_ENV, suffix, options) {
 
 function addPackTasks(entries, suffix, loaders, tasks) {
     var options = {};
+    var externals = {};
+    options.externals = externals;
+
+    var name, camelExternalName;
 
     // eslint-disable-next-line guard-for-in
-    for (var name in entries) {
+    for (name in entries) {
+        camelExternalName = camelize(name + suffix);
+        externals[name] = {
+            amd: name + suffix,
+            commonjs: camelExternalName,
+            commonjs2: camelExternalName,
+            root: camelExternalName
+        };
+    }
+
+    // eslint-disable-next-line guard-for-in
+    for (name in entries) {
         tasks.push(pack.bind(null, name, suffix, entries[name], loaders, options));
     }
 }
@@ -136,8 +153,6 @@ function getLoaders(preprocessLoader, ispartaLoader) {
 }
 
 function pack(name, suffix, entry, loaders, options, done) {
-    var camelExternalName = camelize("vrdom" + suffix);
-
     options = _.merge({
         devtool: "source-map",
         resolve: {
@@ -157,15 +172,7 @@ function pack(name, suffix, entry, loaders, options, done) {
         },
         module: {
             loaders: loaders
-        },
-        externals: {
-            vrdom: {
-                amd: "vrdom" + suffix,
-                commonjs: camelExternalName,
-                commonjs2: camelExternalName,
-                root: camelExternalName
-            }
-        },
+        }
     }, options);
 
     webpack(options, function() {
