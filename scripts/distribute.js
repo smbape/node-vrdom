@@ -34,7 +34,7 @@ module.exports = function(options, done) {
     allTasks.push.apply(allTasks, [
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom.js --source-map dist/vrdom.min.map --in-source-map dist/vrdom.map -o dist/vrdom.min.js --compress --mangle",
         "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.map --in-source-map dist/vrdom-compat.map -o dist/vrdom-compat.min.js --compress --mangle",
-        "node node_modules/uglify-js/bin/uglifyjs dist/devtools.js --source-map dist/devtools.min.map --in-source-map dist/devtools.map -o dist/devtools.min.js --compress --mangle"
+        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-devtools.js --source-map dist/vrdom-devtools.min.map --in-source-map dist/vrdom-devtools.map -o dist/vrdom-devtools.min.js --compress --mangle"
     ]);
 
     anyspawn.spawnSeries(allTasks, {
@@ -57,7 +57,7 @@ function tasks(NODE_ENV, suffix, options) {
     var entries = {
         vrdom: sysPath.join(rootpath, "src", "vrdom.js"),
         "vrdom-compat": sysPath.join(rootpath, "vrdom-compat", "vrdom-compat.js"),
-        "devtools": sysPath.join(rootpath, "devtools", "devtools.js")
+        "vrdom-devtools": sysPath.join(rootpath, "vrdom-devtools", "vrdom-devtools.js")
     };
 
     var tasks = [];
