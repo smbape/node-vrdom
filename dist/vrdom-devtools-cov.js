@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define(["vrdom-cov"], factory);
 	else if(typeof exports === 'object')
-		exports["devtoolsCov"] = factory(require("vrdomCov"));
+		exports["vrdomDevtoolsCov"] = factory(require("vrdomCov"));
 	else
-		root["devtoolsCov"] = factory(root["vrdomCov"]);
+		root["vrdomDevtoolsCov"] = factory(root["vrdomCov"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -596,4 +596,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=devtools-cov.map
+//# sourceMappingURL=vrdom-devtools-cov.map
