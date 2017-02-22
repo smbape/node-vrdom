@@ -1,12 +1,13 @@
 {
   "name": "vrdom",
-  "description": "An alternative to React",
-  "version": "0.0.1",
+  "description": "An alternative to react production build for browser side.",
+  "version": "0.1.1",
   "main": "dist/vrdom.js",
   "author": "Stéphane MBAPE",
   "ignore": [
     "**/.*",
     "babel-plugin",
+    "chrome-extension",
     "coverage",
     "karma-plugin",
     "node_modules",
