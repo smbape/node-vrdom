@@ -343,12 +343,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	function findRoots(childNodes, roots, Mount, Reconciler) {
 	    for (var i = 0, len = childNodes.length; i < len; i++) {
 	        var child = childNodes[i];
-	        if (!hasProp.call(child, expando) || !hasProp.call(child[expando], "rootVNode")) {
-	            findRoots(child.childNodes, roots, Mount, Reconciler);
-	        } else {
+	
+	        if (hasProp.call(child, expando) && hasProp.call(child[expando], "rootVNode")) {
 	            var rootVNode = child[expando].rootVNode;
 	            toReactTopLevelWrapper(rootVNode, roots, Mount, Reconciler);
 	        }
+	
+	        findRoots(child.childNodes, roots, Mount, Reconciler);
 	    }
 	}
 	

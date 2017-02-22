@@ -258,12 +258,13 @@ function toReactComponent(vnode, noUpdate) {
 function findRoots(childNodes, roots, Mount, Reconciler) {
     for (let i = 0, len = childNodes.length; i < len; i++) {
         let child = childNodes[i];
-        if (!hasProp.call(child, expando) || !hasProp.call(child[expando], "rootVNode")) {
-            findRoots(child.childNodes, roots, Mount, Reconciler);
-        } else {
+
+        if (hasProp.call(child, expando) && hasProp.call(child[expando], "rootVNode")) {
             let rootVNode = child[expando].rootVNode;
             toReactTopLevelWrapper(rootVNode, roots, Mount, Reconciler);
         }
+
+        findRoots(child.childNodes, roots, Mount, Reconciler);
     }
 }
 
