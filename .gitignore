@@ -1,5 +1,5 @@
 /build.log
-/bower_components
+/chrome-extension
 /node_modules
 /npm-debug.log
 /test/unit/test-main.js
@@ -11,4 +11,3 @@
 /test/unit/src/work
 /src/w3c/specifications
 /src/mdn/specifications
-/chrome-extension

@@ -1,9 +1,10 @@
 {
   "name": "vrdom",
   "description": "An alternative to react production build for browser side.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/vrdom.js",
   "author": "Stéphane MBAPE",
+  "homepage": "https://github.com/smbape/node-vrdom",
   "ignore": [
     "**/.*",
     "babel-plugin",

@@ -13,9 +13,17 @@
     "test-cover": "node cli.js test-cover",
     "test-cover-browsers": "node cli.js test-cover-browsers"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smbape/node-vrdom"
+  },
   "keywords": [],
   "author": "Stéphane MBAPE",
   "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/smbape/node-vrdom/issues"
+  },
+  "homepage": "https://github.com/smbape/node-vrdom",
   "dependencies": {},
   "devDependencies": {
     "anymatch": "^1.3.0",
