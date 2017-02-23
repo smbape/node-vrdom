@@ -261,7 +261,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    roots[wrapper._rootID] = wrapper;
 	    _renderedComponent.wrapper = wrapper;
-	    Mount._renderNewRootComponent(wrapper);
+	    Mount._renderNewRootComponent(wrapper._currentElement, vnode.node.parentNode, null, vnode.context, wrapper);
 	    Reconciler.mountComponent(wrapper);
 	    return wrapper;
 	}
@@ -384,7 +384,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        // Stub - React DevTools expects to find this method and replace it
 	        // with a wrapper in order to observe new root components being added
-	        _renderNewRootComponent: function _renderNewRootComponent() /* instance, ... */{}
+	        _renderNewRootComponent: function _renderNewRootComponent(nextElement, container, shouldReuseMarkup, context, wrapper) {
+	            return wrapper;
+	        }
 	    };
 	
 	    // ReactReconciler-like object
@@ -568,13 +570,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    componentWillUnmountHook = bridge.componentWillUnmount;
 	
 	    // Notify devtools about this instance of "React"
-	    __REACT_DEVTOOLS_GLOBAL_HOOK__.inject(bridge);
+	    registered = __REACT_DEVTOOLS_GLOBAL_HOOK__.inject(bridge);
 	
 	    hooks.appendHook("componentDidMount", componentDidMountHook);
 	    hooks.appendHook("componentDidUpdate", componentDidUpdateHook);
 	    hooks.appendHook("componentWillUnmount", componentWillUnmountHook);
-	
-	    registered = true;
 	}
 	
 	function unregister() {
@@ -583,6 +583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        hooks.removeHook("componentDidUpdate", componentDidUpdateHook);
 	        hooks.removeHook("componentWillUnmount", componentWillUnmountHook);
 	
+	        delete __REACT_DEVTOOLS_GLOBAL_HOOK__._renderers[registered];
 	        registered = false;
 	    }
 	}

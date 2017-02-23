@@ -25,10 +25,6 @@ module.exports = function attachRef(owner, ref, instance) {
         /// #endif
     }
 
-    if (!owner.refs) {
-        owner.refs = {};
-    }
-
     ref = String(ref);
 
     if (instance === null) {

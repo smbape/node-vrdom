@@ -6,9 +6,10 @@ var Renderer;
 module.exports = Component;
 
 function Component(props, context) {
+    this.id = uniqueId("Component");
     this.props = props;
     this.context = context;
-    this.id = uniqueId("Component");
+    this.refs = {};
 }
 
 Component.prototype[expando + "_isComponent"] = true;

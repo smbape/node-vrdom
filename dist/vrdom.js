@@ -423,9 +423,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Component;
 	
 	function Component(props, context) {
+	    this.id = uniqueId("Component");
 	    this.props = props;
 	    this.context = context;
-	    this.id = uniqueId("Component");
+	    this.refs = {};
 	}
 	
 	Component.prototype[expando + "_isComponent"] = true;
@@ -555,10 +556,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /////////
 	        return; // eslint-disable-line no-useless-return
 	        //////////
-	    }
-	
-	    if (!owner.refs) {
-	        owner.refs = {};
 	    }
 	
 	    ref = String(ref);

@@ -1,1 +1,1 @@
-require("./vrdom-devtools").register();
+require("vrdom-devtools").register();
