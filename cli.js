@@ -4,7 +4,7 @@ var anyspawn = require("anyspawn");
 var args = process.argv.slice(3).map(anyspawn.quoteArg);
 var push = Array.prototype.push;
 var hasProp = Object.prototype.hasOwnProperty;
-var testClientRoot = sysPath.join(__dirname, "test", "unit", "src");
+var testClientRoot = sysPath.join(__dirname, "test", "unit");
 var mkdirp = require("mkdirp");
 var deepExtend = require("deep-extend");
 var request = require("request");
@@ -20,7 +20,7 @@ var testCommand = "node node_modules/karma/bin/karma start test/karma.conf.js";
 
 var commands = {
     prepublish: distribute,
-    lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/src/app/node_modules/tests/**/*.js\" \"test/unit/src/app/node_modules/Triggers.js\"",
+    lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
 
     "build-only": function(next) {
@@ -104,21 +104,6 @@ var commands = {
     },
 
     "install-test-client": installTestClient,
-
-    "public-distribution": function(next) {
-        opts.cwd = sysPath.resolve(__dirname, "..");
-        spawn([
-            "mv node-vrdom/.git node-vrdom/.git.bak",
-            "mv node-rvdom/.git node-vrdom",
-            "cd node-vrdom && git reset --hard HEAD && git clean --force",
-            "mv node-vrdom/.git node-rvdom",
-            "mv node-vrdom/.git.bak node-vrdom/.git",
-            rvdomtovrdom
-        ], function() {
-            delete opts.cwd;
-            next.apply(null, arguments);
-        });
-    }
 };
 
 commands.build = [
@@ -328,93 +313,4 @@ function spawn(cmd) {
     }
 
     anyspawn.spawnSeries(cmd, opts, done);
-}
-
-function rvdomtovrdom(done) {
-    var fs = require("fs-extra");
-    var explore = require("fs-explorer").explore;
-    var async = require("async");
-
-    var cwd = sysPath.resolve(__dirname, "..", "node-vrdom");
-
-    var toIgnore = new RegExp(("^" + cwd + "/(?:" + [
-        ".git",
-        "node_modules",
-        "test/unit/src/node_modules",
-        "test/unit/src/bower_components",
-        "test/unit/src/public",
-        "cli.js"
-    ].join("|") + ")$").replace(/[/\\]/g, /[/\\]/.source).replace(/\./g, "\\."));
-
-    explore(cwd, function(absolutePath, stats, next) {
-        if (toIgnore.test(absolutePath)) {
-            next();
-            return;
-        }
-
-        var path = sysPath.relative(cwd, absolutePath);
-        var rvdomReg = /rvdom/g;
-
-        async.waterfall([
-            function(next) {
-                var filepath = path;
-
-                if (rvdomReg.test(path)) {
-                    filepath = path.replace(rvdomReg, "vrdom");
-                }
-
-                next(null, filepath);
-            },
-            function(filepath, next) {
-                fs.readFile(absolutePath, function(err, buffer) {
-                    if (err) {
-                        next(err);
-                        return;
-                    }
-
-                    var content = buffer.toString();
-                    if (rvdomReg.test(content)) {
-                        content = content.replace(rvdomReg, "vrdom");
-                        fs.writeFile(absolutePath, content, function(err) {
-                            if (err) {
-                                next(err);
-                                return;
-                            }
-
-                            console.log("replaced content of", path);
-                            next(null, filepath);
-                        });
-                        return;
-                    }
-
-                    next(null, filepath);
-                });
-            },
-            function(filepath, next) {
-                if (filepath !== path) {
-                    console.log("move", path, "to", filepath);
-                    // anyspawn.exec("git", ["mv", path, filepath], {
-                    //     cwd: cwd,
-                    //     stdio: "inherit",
-                    //     prompt: anyspawn.defaults.prompt
-                    // }, next);
-                    fs.move(sysPath.join(cwd, path), sysPath.join(cwd, filepath), { overwrite: true }, next);
-                    return;
-                }
-
-                next();
-            }
-        ], next);
-    }, function(absolutePath, stats, files, state, next) {
-        if (state === "begin" && toIgnore.test(absolutePath)) {
-            console.log("ignore", absolutePath);
-            next(null, true);
-            return;
-        }
-
-        next();
-    }, {followSymlink: true}, function(err) {
-        done;
-    });
-
 }

@@ -10,7 +10,7 @@
         "transform-flow-strip-types",
         "syntax-flow",
         "syntax-jsx",
-        ["../../../babel-plugin/transform-react-display-name", {
+        ["../../babel-plugin/transform-react-display-name", {
             "pragma": "vrdom.createClass",
             "value": "displayName"
         }]

@@ -8,7 +8,7 @@ var ref = require("umd-builder/lib/brunch-config"),
     matcher = ref.matcher,
     config = ref.config;
 
-var rootpath = sysPath.resolve(__dirname, "..", "..", "..");
+var rootpath = sysPath.resolve(__dirname, "..", "..");
 var projectRoot = rootpath.replace(/[/\\]/g, "/");
 projectRoot = sysPath.relative(process.cwd(), projectRoot);
 
@@ -190,8 +190,8 @@ exports.config = _.merge(config, {
             warnOnly: true
         },
         amd: {
-            mainTemplate: sysPath.resolve(__dirname, "..", "templates", "main.js"),
-            unitBuildDest: sysPath.resolve(__dirname, "..", "test-main.js"),
+            mainTemplate: sysPath.resolve(__dirname, "templates", "main.js"),
+            unitBuildDest: sysPath.resolve(__dirname, "test-main.js"),
             jshint: false,
             factories: {
                 fvrdom: function(plugin, modulePath, data, parsed) {

@@ -20,10 +20,10 @@ module.exports = function(config) {
             /* */
 
             {
-                pattern: "test/unit/src/public/**/*.js",
+                pattern: "test/unit/public/**/*.js",
                 included: false
             }, {
-                pattern: "test/unit/src/public/**/*.map",
+                pattern: "test/unit/public/**/*.map",
                 included: false
             }
         ],

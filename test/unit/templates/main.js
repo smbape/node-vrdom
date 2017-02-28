@@ -23,7 +23,7 @@ var isMain = false,
 switch(root.type) {
     case 'unit':
         isUnit = true;
-        config.baseUrl = '/base/test/unit/src/' + root.paths.public + '/' + config.baseUrl;
+        config.baseUrl = '/base/test/unit/' + root.paths.public + '/' + config.baseUrl;
         break;
     case 'build':
         isMainBuild = true;
