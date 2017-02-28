@@ -2168,9 +2168,9 @@
       "resolved": "https://registry.npmjs.org/ultron/-/ultron-1.0.2.tgz"
     },
     "umd-builder": {
-      "version": "2.9.2",
-      "from": "umd-builder@>=2.9.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/umd-builder/-/umd-builder-2.9.2.tgz",
+      "version": "2.10.0",
+      "from": "umd-builder@>=2.10.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/umd-builder/-/umd-builder-2.10.0.tgz",
       "dependencies": {
         "coffee-script": {
           "version": "1.12.3",
