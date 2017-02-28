@@ -22,7 +22,7 @@ function createNode(vnode, opts) {
         return null;
     }
 
-    var doc = opts ? opts.document || globalDocument : globalDocument;
+    var doc = opts.document ? opts.document : globalDocument;
     var nodeMap = opts ? opts.nodeMap : null;
 
     if (vnode.isWidget) {

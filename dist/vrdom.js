@@ -8,6 +8,7 @@
 	else
 		root["vrdom"] = factory();
 })(this, function() {
+'use strict'
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -395,6 +396,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    expando: expando,
 	    hooks: hooks,
 	    functions: functions,
+	    renderOptions: Renderer.renderOptions,
 	    LinkUtils: __webpack_require__(54),
 	    DOM: function () {
 	        var DOM = {};
@@ -2723,7 +2725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return null;
 	    }
 	
-	    var doc = opts ? opts.document || globalDocument : globalDocument;
+	    var doc = opts.document ? opts.document : globalDocument;
 	    var nodeMap = opts ? opts.nodeMap : null;
 	
 	    if (vnode.isWidget) {
@@ -7767,6 +7769,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    component.state = nextState;
 	                }
 	
+	                this.prevProps = prevProps;
+	                this.prevState = prevState;
+	                this.prevContext = prevContext;
 	                component.context = nextCurrentContext;
 	                widget.context = nextContext;
 	                widget.childContext = this.getChildContext(type, component, nextContext);
@@ -7785,13 +7790,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            component.componentWillUpdate(nextProps, nextState, nextCurrentContext);
 	        }
 	
-	        this.prevProps = prevProps;
-	        this.prevState = prevState;
-	        this.prevContext = prevContext;
-	
 	        if (willReceive || pendingMethod === "forceUpdate") {
 	            component.props = nextProps;
 	        }
+	        this.prevProps = prevProps;
+	        this.prevState = prevState;
+	        this.prevContext = prevContext;
 	        component.state = nextState;
 	        component.context = nextCurrentContext;
 	        widget.context = nextContext;

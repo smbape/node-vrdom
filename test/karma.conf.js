@@ -13,9 +13,9 @@ module.exports = function(config) {
         basePath: "../",
 
         files: [
-            "test/unit/src/test/unit/test-main.js",
-            require.resolve("../patches/browser-patches.js"),
-            require.resolve("../karma-plugin/custom-matchers.js"),
+            "test/unit/test-main.js",
+            sysPath.resolve(__dirname, "../patches/browser-patches.js"),
+            sysPath.resolve(__dirname, "../karma-plugin/custom-matchers.js"),
 
             /* */
 
@@ -38,10 +38,10 @@ module.exports = function(config) {
 
         browsers: [
             "Chrome",
-        // "Firefox",
-        // "Edge",
-        // "IE",
-        // "Opera"
+            // "Firefox",
+            // "Edge",
+            // "IE",
+            // "Opera"
         ],
 
         customLaunchers: {

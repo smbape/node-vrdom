@@ -73,15 +73,31 @@ var code = fs.readFileSync(sysPath.join(__dirname, "input.jsx")).toString();
 code = babel.transform(code, options).code;
 console.log(code);
 
+var codeUpdate = fs.readFileSync(sysPath.join(__dirname, "input-update.jsx")).toString();
+codeUpdate = babel.transform(codeUpdate, options).code;
+console.log(codeUpdate);
+
 require("app-module-path").addPath(__dirname + "/../../src");
 require("app-module-path").addPath(__dirname + "/../../vrdom-compat");
 
 var globalDocument = require("global/document");
 var vrdom = require("vrdom-compat");
+vrdom.renderOptions.document = globalDocument;
 
 var timerInit = new Date().getTime();
 // var el = vrdom.createElement("div", { onClick: function(evt) { console.log(evt) } }, "some text");
 eval(code);
+
+var container = globalDocument.createElement("div");
+var node = vrdom.render(el, container);
+var html = String(node);
+
+var timerDiff = new Date().getTime() - timerInit;
+
+console.log("took", timerDiff, "ms to render");
+console.log(html);
+
+eval(codeUpdate);
 
 var container = globalDocument.createElement("div");
 var node = vrdom.render(el, container);

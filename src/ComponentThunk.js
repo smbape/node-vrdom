@@ -179,6 +179,9 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
                     component.state = nextState;
                 }
 
+                this.prevProps = prevProps;
+                this.prevState = prevState;
+                this.prevContext = prevContext;
                 component.context = nextCurrentContext;
                 widget.context = nextContext;
                 widget.childContext = this.getChildContext(type, component, nextContext);
@@ -197,13 +200,12 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
             component.componentWillUpdate(nextProps, nextState, nextCurrentContext);
         }
 
-        this.prevProps = prevProps;
-        this.prevState = prevState;
-        this.prevContext = prevContext;
-
         if (willReceive || pendingMethod === "forceUpdate") {
             component.props = nextProps;
         }
+        this.prevProps = prevProps;
+        this.prevState = prevState;
+        this.prevContext = prevContext;
         component.state = nextState;
         component.context = nextCurrentContext;
         widget.context = nextContext;

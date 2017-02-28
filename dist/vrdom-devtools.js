@@ -8,6 +8,7 @@
 	else
 		root["vrdomDevtools"] = factory(root["vrdom"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+'use strict'
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};

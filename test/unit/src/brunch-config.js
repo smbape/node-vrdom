@@ -190,7 +190,8 @@ exports.config = _.merge(config, {
             warnOnly: true
         },
         amd: {
-            mainTemplate: sysPath.resolve(__dirname, "templates", "main.js"),
+            mainTemplate: sysPath.resolve(__dirname, "..", "templates", "main.js"),
+            unitBuildDest: sysPath.resolve(__dirname, "..", "test-main.js"),
             jshint: false,
             factories: {
                 fvrdom: function(plugin, modulePath, data, parsed) {

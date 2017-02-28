@@ -174,7 +174,7 @@ switch(root.type) {
         sourceMapSupport.install();
 
         preact.options.syncComponentUpdates = true;
-        preact.options.debounceRendering = function(render) {
+        preact.options.debounceRendering = function(rerender) {
             rerender();
         };
 
