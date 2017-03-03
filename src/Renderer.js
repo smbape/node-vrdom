@@ -291,8 +291,8 @@ Renderer.render = function(element, container, callback) {
             }
 
             executeCallback(callback, vnode.getInstance(Renderer.renderOptions));
-            processWidgetPendingState(vnode);
 
+            processWidgetPendingState(vnode);
             if (performAfterUpdates) {
                 processAfterUpdates();
             }
@@ -418,6 +418,8 @@ function processRendered(renderedCheckpoint) {
         method = args[1];
         args = args[2];
 
+        processAfterUpdate(vnode);
+
         if (method) {
             if (vnode[method]) {
                 vnode[method].apply(vnode, args);
@@ -478,14 +480,22 @@ function processAfterUpdates() {
 
     for (var key in updates) {
         if (hasProp.call(nodeMap, key)) {
-            var mapping = nodeMap[key],
-                vnode = mapping.vnode,
-                domNode = mapping.node,
-                type = vnode.tagName;
+            processAfterUpdate(nodeMap[key].vnode, true);
+        }
+    }
+}
 
-            if (hasProp.call(controls.afterUpdates, type)) {
-                controls.afterUpdates[type](vnode, domNode);
-            }
+function processAfterUpdate(vnode, noCheck) {
+    if (noCheck || hasProp.call(Renderer._afterUpdates, vnode.key)) {
+        if (!noCheck) {
+            delete Renderer._afterUpdates[vnode.key];
+        }
+
+        var domNode = vnode.node,
+            type = vnode.tagName;
+
+        if (hasProp.call(controls.afterUpdates, type)) {
+            controls.afterUpdates[type](vnode, domNode);
         }
     }
 }

@@ -117,8 +117,11 @@ commands["test-cover"] = function(next) {
     process.env.TEST_REGEXP = /[/\\]tests[/\\]\d{4}-.*-test\.js$/.source.replace(/\\/g, "\\\\");
     process.env.COVERAGE = "1";
 
-    spawn(commands.test, function() {
+    spawn(commands.test, function(err) {
         // ignore error
+        if (err) {
+            console.error(err);
+        }
         spawn(commands.combine, next);
     });
 };

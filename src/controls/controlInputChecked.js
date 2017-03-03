@@ -91,7 +91,8 @@ function _controlInputChecked(evt) {
         isNew = !hasProp.call(inst, "skipDefault"),
         props = vnode.props,
         checked = LinkUtils.getChecked(props),
-        defaultChecked = props.defaultChecked;
+        defaultChecked = props.defaultChecked,
+        shouldControl = isNew || hasProp.call(vnode.props, "checked") || hasProp.call(vnode.props, "checkedLink");
 
     /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
     var msg;
@@ -104,7 +105,7 @@ function _controlInputChecked(evt) {
             msg = translator.translate("errors.input.checked-null", "<input type=\"" + props.type + "\" />", "checked");
             shouldWarnInputCheckedNull = false;
         }
-    /// #endif
+        /// #endif
     } else if (checked !== undefined) {
         /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
         if (!prevProps && !msg && shouldWarnInputCheckedDefault && defaultChecked) {
@@ -113,14 +114,14 @@ function _controlInputChecked(evt) {
         }
         /// #endif
 
-        if (isNew || target.checked !== checked) {
+        if (isNew || shouldControl && target.checked !== checked) {
             // according to w3c HTML spec,
             // defaultChecked must reflect checked
             // https://www.w3.org/TR/html/sec-forms.html#sec-forms
             target.checked = checked;
             target.defaultChecked = defaultChecked || checked;
         }
-    } else if (defaultChecked && !inst.skipDefault) {
+    } else if (shouldControl && defaultChecked && !inst.skipDefault) {
         if (isNew || target.checked !== defaultChecked) {
             target.checked = defaultChecked;
         }

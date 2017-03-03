@@ -40,7 +40,8 @@ module.exports = function controlSelectValue(evt) {
     var inst = target[expando],
         isNew = !hasProp.call(inst, "skipDefault"),
         props = vnode.props,
-        prevProps = isNew ? null : inst.props;
+        prevProps = isNew ? null : inst.props,
+        shouldControl = isNew || hasProp.call(vnode.props, "value") || hasProp.call(vnode.props, "valueLink");
 
     inst.props = clone(props);
 
@@ -48,8 +49,9 @@ module.exports = function controlSelectValue(evt) {
         defaultValue = props.defaultValue,
         multiple = props.multiple;
 
-    if (prevProps) {
-        inst.skipDefault = prevProps.multiple === multiple;
+    if (prevProps && prevProps.multiple !== multiple) {
+        shouldControl = true;
+        inst.skipDefault = false;
     }
 
     /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
@@ -85,6 +87,10 @@ module.exports = function controlSelectValue(evt) {
         console.error(msg);
     }
     /// #endif
+
+    if (!shouldControl) {
+        return;
+    }
 
     if (isNew) {
         inst.skipDefault = true;

@@ -2282,8 +2282,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            executeCallback(callback, vnode.getInstance(Renderer.renderOptions));
-	            processWidgetPendingState(vnode);
 	
+	            processWidgetPendingState(vnode);
 	            if (performAfterUpdates) {
 	                processAfterUpdates();
 	            }
@@ -2409,6 +2409,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        method = args[1];
 	        args = args[2];
 	
+	        processAfterUpdate(vnode);
+	
 	        if (method) {
 	            if (vnode[method]) {
 	                vnode[method].apply(vnode, args);
@@ -2469,14 +2471,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    for (var key in updates) {
 	        if (hasProp.call(nodeMap, key)) {
-	            var mapping = nodeMap[key],
-	                vnode = mapping.vnode,
-	                domNode = mapping.node,
-	                type = vnode.tagName;
+	            processAfterUpdate(nodeMap[key].vnode, true);
+	        }
+	    }
+	}
 	
-	            if (hasProp.call(controls.afterUpdates, type)) {
-	                controls.afterUpdates[type](vnode, domNode);
-	            }
+	function processAfterUpdate(vnode, noCheck) {
+	    if (noCheck || hasProp.call(Renderer._afterUpdates, vnode.key)) {
+	        if (!noCheck) {
+	            delete Renderer._afterUpdates[vnode.key];
+	        }
+	
+	        var domNode = vnode.node,
+	            type = vnode.tagName;
+	
+	        if (hasProp.call(controls.afterUpdates, type)) {
+	            controls.afterUpdates[type](vnode, domNode);
 	        }
 	    }
 	}
@@ -3028,10 +3038,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var namespace = propConfig.namespace;
 	        var isBoolean = propConfig.isBoolean;
 	        var isProperty = propConfig.isProperty;
+	        var isString = propConfig.type === "String";
 	
 	        if (isProperty) {
 	            if (shouldRemoveAttribute(propConfig, prevValue)) {
 	                prevValue = isBoolean ? false : "";
+	            } else if (isString) {
+	                prevValue = String(prevValue);
 	            }
 	
 	            // removing checked should preserve existing checked
@@ -3039,6 +3052,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                nextValue = prevValue;
 	            } else if (shouldRemoveAttribute(propConfig, nextValue)) {
 	                nextValue = isBoolean ? false : "";
+	            } else if (isString) {
+	                nextValue = String(nextValue);
 	            }
 	
 	            if (prevValue !== nextValue) {
@@ -5956,7 +5971,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        isNew = !hasProp.call(inst, "skipDefault"),
 	        props = vnode.props,
 	        checked = LinkUtils.getChecked(props),
-	        defaultChecked = props.defaultChecked;
+	        defaultChecked = props.defaultChecked,
+	        shouldControl = isNew || hasProp.call(vnode.props, "checked") || hasProp.call(vnode.props, "checkedLink");
 	
 	    ////////////////////////////////////////////////////////////////////
 	    ////////
@@ -5978,14 +5994,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	         
 	        //////////
 	
-	        if (isNew || target.checked !== checked) {
+	        if (isNew || shouldControl && target.checked !== checked) {
 	            // according to w3c HTML spec,
 	            // defaultChecked must reflect checked
 	            // https://www.w3.org/TR/html/sec-forms.html#sec-forms
 	            target.checked = checked;
 	            target.defaultChecked = defaultChecked || checked;
 	        }
-	    } else if (defaultChecked && !inst.skipDefault) {
+	    } else if (shouldControl && defaultChecked && !inst.skipDefault) {
 	        if (isNew || target.checked !== defaultChecked) {
 	            target.checked = defaultChecked;
 	        }
@@ -6144,7 +6160,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        isNew = !hasProp.call(inst, "skipDefault"),
 	        props = vnode.props,
 	        value = LinkUtils.getValue(props),
-	        defaultValue = vnode.props.defaultValue;
+	        defaultValue = vnode.props.defaultValue,
+	        shouldControl = isNew || hasProp.call(vnode.props, "value") || hasProp.call(vnode.props, "valueLink");
 	
 	    ////////////////////////////////////////////////////////////////////
 	    //////////////////////////////////////////
@@ -6179,11 +6196,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	         
 	        //////////
 	
-	        if (isNew || String(target.value) !== String(value)) {
+	        if (isNew || shouldControl && String(target.value) !== String(value)) {
 	            target.value = value;
 	            target.defaultValue = defaultValue == null ? value : defaultValue;
 	        }
-	    } else if (defaultValue != null && !inst.skipDefault) {
+	    } else if (shouldControl && defaultValue != null && !inst.skipDefault) {
 	        if (isNew || String(target.value) !== String(defaultValue)) {
 	            target.value = defaultValue;
 	        }
@@ -6349,7 +6366,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var inst = target[expando],
 	        isNew = !hasProp.call(inst, "skipDefault"),
 	        props = vnode.props,
-	        prevProps = isNew ? null : inst.props;
+	        prevProps = isNew ? null : inst.props,
+	        shouldControl = isNew || hasProp.call(vnode.props, "value") || hasProp.call(vnode.props, "valueLink");
 	
 	    inst.props = clone(props);
 	
@@ -6357,8 +6375,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        defaultValue = props.defaultValue,
 	        multiple = props.multiple;
 	
-	    if (prevProps) {
-	        inst.skipDefault = prevProps.multiple === multiple;
+	    if (prevProps && prevProps.multiple !== multiple) {
+	        shouldControl = true;
+	        inst.skipDefault = false;
 	    }
 	
 	    ////////////////////////////////////////////////////////////////////
@@ -6394,6 +6413,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ///////////////////
 	     
 	    //////////
+	
+	    if (!shouldControl) {
+	        return;
+	    }
 	
 	    if (isNew) {
 	        inst.skipDefault = true;

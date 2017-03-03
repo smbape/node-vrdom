@@ -240,10 +240,13 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
         var namespace = propConfig.namespace;
         var isBoolean = propConfig.isBoolean;
         var isProperty = propConfig.isProperty;
+        var isString = propConfig.type === "String";
 
         if (isProperty) {
             if (shouldRemoveAttribute(propConfig, prevValue)) {
                 prevValue = isBoolean ? false : "";
+            } else if (isString) {
+                prevValue = String(prevValue);
             }
 
             // removing checked should preserve existing checked
@@ -251,6 +254,8 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
                 nextValue = prevValue;
             } else if (shouldRemoveAttribute(propConfig, nextValue)) {
                 nextValue = isBoolean ? false : "";
+            } else if (isString) {
+                nextValue = String(nextValue);
             }
 
             if (prevValue !== nextValue) {

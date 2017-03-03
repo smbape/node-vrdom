@@ -43,7 +43,8 @@ module.exports = function controlInputValue(evt) {
         isNew = !hasProp.call(inst, "skipDefault"),
         props = vnode.props,
         value = LinkUtils.getValue(props),
-        defaultValue = vnode.props.defaultValue;
+        defaultValue = vnode.props.defaultValue,
+        shouldControl = isNew || hasProp.call(vnode.props, "value") || hasProp.call(vnode.props, "valueLink");
 
     /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
     var prevProps = isNew ? null : inst.props;
@@ -78,11 +79,11 @@ module.exports = function controlInputValue(evt) {
         }
         /// #endif
 
-        if (isNew || String(target.value) !== String(value)) {
+        if (isNew || shouldControl && String(target.value) !== String(value)) {
             target.value = value;
             target.defaultValue = defaultValue == null ? value : defaultValue;
         }
-    } else if (defaultValue != null && !inst.skipDefault) {
+    } else if (shouldControl && defaultValue != null && !inst.skipDefault) {
         if (isNew || String(target.value) !== String(defaultValue)) {
             target.value = defaultValue;
         }
