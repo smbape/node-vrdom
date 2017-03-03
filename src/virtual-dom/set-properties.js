@@ -246,7 +246,10 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
                 prevValue = isBoolean ? false : "";
             }
 
-            if (shouldRemoveAttribute(propConfig, nextValue)) {
+            // removing checked should preserve existing checked
+            if (type === "input" && attrName === "checked" && (nextProps.type === "checkbox" || nextProps.type === "radio") && !hasProp.call(nextProps, "checked")) {
+                nextValue = prevValue;
+            } else if (shouldRemoveAttribute(propConfig, nextValue)) {
                 nextValue = isBoolean ? false : "";
             }
 
@@ -386,6 +389,10 @@ function setAttribute(node, attrName, attrValue, namespace) {
             // should not render value as an attribute for textarea
             node.value = attrValue;
         } else {
+            if (attrName === "value" && hasEditableValue(node.tagName.toLowerCase(), { type: node.type })) {
+                // also set value for element with editable values
+                node.value = attrValue;
+            }
             node.setAttribute(attrName, attrValue);
         }
     }

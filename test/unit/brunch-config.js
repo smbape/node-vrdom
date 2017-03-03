@@ -140,7 +140,8 @@ exports.config = _.merge(config, {
     // fileListInterval: 5 * 60 * 60,
 
     requirejs: {
-        waitSeconds : 30
+        waitSeconds : 30,
+        deps: [ "auto-reload" ]
     },
 
     modules: {
@@ -216,7 +217,33 @@ exports.config = _.merge(config, {
             },
 
             // eslint-disable-next-line no-magic-numbers
-            port: [1234, 2345, 3456],
+            port: (function() {
+                /**
+                 * Shuffles array in place.
+                 * @param {Array} a items The array containing the items.
+                 */
+                function shuffle(a) {
+                    var j, x, i;
+                    for (i = a.length; i; i--) {
+                        j = Math.floor(Math.random() * i);
+                        x = a[i - 1];
+                        a[i - 1] = a[j];
+                        a[j] = x;
+                    }
+                    return a;
+                }
+
+                var start = 28000;
+                var end = 45000;
+                var len = end - start;
+                var ports = new Array(len);
+
+                for (var i = 0; i < len; i++) {
+                    ports[i] = start + i;
+                }
+
+                return shuffle(ports);
+            }()),
             delay: require("os").platform() === "win32" ? 200 : (void 0), // eslint-disable-line no-magic-numbers
             forcewss: true
         }
