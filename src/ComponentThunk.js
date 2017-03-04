@@ -356,6 +356,39 @@ ComponentThunk.prototype.willUnmount = function() {
 
 ComponentThunk.prototype.destroy = function() {
     var key;
+
+    if (this._type !== "Stateless") {
+        var component = this.component;
+        var props = component.props;
+        var state = component.state;
+        var context = component.context;
+
+        if (!Object.isFrozen(props)) {
+            for (key in props) {
+                if (hasProp.call(props, key)) {
+                    delete props[key];
+                }
+            }
+        }
+
+        if (state && !Object.isFrozen(state)) {
+            for (key in state) {
+                if (hasProp.call(state, key)) {
+                    delete state[key];
+                }
+            }
+        }
+
+        if (context && !Object.isFrozen(context)) {
+            for (key in context) {
+                if (hasProp.call(context, key)) {
+                    delete context[key];
+                }
+            }
+        }
+    }
+
+
     for (key in this) {
         if (hasProp.call(this, key) && key !== "id" && key !== "key") {
             delete this[key];

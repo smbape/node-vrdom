@@ -225,7 +225,7 @@ function toReactComponent(vnode, noUpdate) {
     }
 
     if (noUpdate) {
-        return vnode._reactInternalInstance;
+        return vnode._reactInternalDevToolInstance;
     }
 
     let inst;
@@ -245,7 +245,7 @@ function toReactComponent(vnode, noUpdate) {
         toReactTextComponent(vnode, inst);
     }
 
-    vnode._reactInternalInstance = inst;
+    vnode._reactInternalDevToolInstance = inst;
     return inst;
 }
 /**
@@ -389,6 +389,12 @@ function createDevToolsBridge() {
 
     const componentWillUnmount = vnode => {
         let instance = toReactComponent(vnode);
+        let rootInstance;
+
+        if (isRootVNode(vnode)) {
+            rootInstance = toReactTopLevelWrapper(instance.vnode, roots, Mount, Reconciler);
+            Reconciler.unmountComponent(instance);
+        }
 
         visitNonCompositeChildren(childInst => {
             instanceMap.delete(childInst.vnode);
@@ -405,14 +411,12 @@ function createDevToolsBridge() {
         }
         delete instance._hostNode;
         delete instance.vnode;
-        delete vnode._reactInternalInstance;
+        delete vnode._reactInternalDevToolInstance;
 
-        if (isRootVNode(vnode)) {
-            instance = toReactTopLevelWrapper(instance, roots, Mount, Reconciler);
-            Reconciler.unmountComponent(instance);
-            delete instance._hostNode;
-            delete instance.vnode;
-            delete vnode._reactInternalInstance;
+        if (rootInstance) {
+            delete rootInstance._hostNode;
+            delete rootInstance.vnode;
+            delete vnode._reactInternalDevToolInstance;
         }
     };
 

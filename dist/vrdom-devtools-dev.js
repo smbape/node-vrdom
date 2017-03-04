@@ -311,7 +311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (noUpdate) {
-	        return vnode._reactInternalInstance;
+	        return vnode._reactInternalDevToolInstance;
 	    }
 	
 	    var inst = void 0;
@@ -331,7 +331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        toReactTextComponent(vnode, inst);
 	    }
 	
-	    vnode._reactInternalInstance = inst;
+	    vnode._reactInternalDevToolInstance = inst;
 	    return inst;
 	}
 	/**
@@ -475,6 +475,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var componentWillUnmount = function componentWillUnmount(vnode) {
 	        var instance = toReactComponent(vnode);
+	        var rootInstance = void 0;
+	
+	        if (isRootVNode(vnode)) {
+	            rootInstance = toReactTopLevelWrapper(instance.vnode, roots, Mount, Reconciler);
+	            Reconciler.unmountComponent(instance);
+	        }
 	
 	        visitNonCompositeChildren(function (childInst) {
 	            instanceMap.delete(childInst.vnode);
@@ -491,14 +497,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        delete instance._hostNode;
 	        delete instance.vnode;
-	        delete vnode._reactInternalInstance;
+	        delete vnode._reactInternalDevToolInstance;
 	
-	        if (isRootVNode(vnode)) {
-	            instance = toReactTopLevelWrapper(instance, roots, Mount, Reconciler);
-	            Reconciler.unmountComponent(instance);
-	            delete instance._hostNode;
-	            delete instance.vnode;
-	            delete vnode._reactInternalInstance;
+	        if (rootInstance) {
+	            delete rootInstance._hostNode;
+	            delete rootInstance.vnode;
+	            delete vnode._reactInternalDevToolInstance;
 	        }
 	    };
 	
