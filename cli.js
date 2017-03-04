@@ -17,11 +17,29 @@ var opts = {
 };
 
 var testCommand = "node node_modules/karma/bin/karma start test/karma.conf.js";
+var rootBowerFile = sysPath.join(__dirname, "bower.json");
 
 var commands = {
     prepublish: distribute,
     lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
+
+    version: [
+        function(next) {
+            fs.readFile(rootBowerFile, function(err, data) {
+                if (err) {
+                    return next(err);
+                }
+    
+                var version = require("./package").version;
+                var content = data.toString();
+                content = content.replace(/^(\s*"version":\s*)"([^"]+)"/mg, "$1\"" + version + "\"");
+                fs.writeFile(rootBowerFile, content, next);
+            });
+        },
+
+        ["git", ["add", rootBowerFile]]
+    ],
 
     "build-only": function(next) {
         opts.cwd = testClientRoot;
