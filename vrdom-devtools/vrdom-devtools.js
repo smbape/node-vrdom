@@ -86,7 +86,7 @@ function toReactCompositeComponent(vnode, inst) {
             configurable: true, // can be deleted and reconfigured
 
             get: function() {
-                return this.vnode.element;
+                return this.vnode && this.vnode.element;
             },
 
             set: function(element) {

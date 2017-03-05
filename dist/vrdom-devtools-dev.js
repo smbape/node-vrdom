@@ -159,7 +159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            configurable: true, // can be deleted and reconfigured
 	
 	            get: function get() {
-	                return this.vnode.element;
+	                return this.vnode && this.vnode.element;
 	            },
 	
 	            set: function set(element) {

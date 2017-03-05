@@ -136,9 +136,13 @@ commands["test-cover"] = function(next) {
     process.env.COVERAGE = "1";
 
     spawn(commands.test, function(err) {
-        // ignore error
+        // ignore test errors
         if (err) {
             console.error(err);
+            if (err.code === "EPERM") {
+                next();
+                return
+            }
         }
         spawn(commands.combine, next);
     });
@@ -164,8 +168,15 @@ commands["test-cover-browsers"] = function(next) {
             "--reporters progress,coverage",
             "--browsers Chrome,Firefox,Opera,Edge,IE11,IE10,IE9",
         ].concat(args).join(" ")
-    ], function() {
-        // ignore error
+    ], function(err) {
+        // ignore test errors
+        if (err) {
+            console.error(err);
+            if (err.code === "EPERM") {
+                next();
+                return
+            }
+        }
         spawn(commands.combine, next);
     });
 };
