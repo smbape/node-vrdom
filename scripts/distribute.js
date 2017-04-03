@@ -33,9 +33,9 @@ module.exports = function(options, done) {
 
     var allTasks = tasks("development", "-dev", options).concat(tasks("production", "", options));
     push.apply(allTasks, [
-        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom.js --source-map dist/vrdom.min.map --in-source-map dist/vrdom.map -o dist/vrdom.min.js --compress --mangle",
-        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.map --in-source-map dist/vrdom-compat.map -o dist/vrdom-compat.min.js --compress --mangle",
-        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-devtools.js --source-map dist/vrdom-devtools.min.map --in-source-map dist/vrdom-devtools.map -o dist/vrdom-devtools.min.js --compress --mangle"
+        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom.js --source-map dist/vrdom.min.js.map --in-source-map dist/vrdom.js.map -o dist/vrdom.min.js --compress --mangle",
+        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-compat.js --source-map dist/vrdom-compat.min.js.map --in-source-map dist/vrdom-compat.js.map -o dist/vrdom-compat.min.js --compress --mangle",
+        "node node_modules/uglify-js/bin/uglifyjs dist/vrdom-devtools.js --source-map dist/vrdom-devtools.min.js.map --in-source-map dist/vrdom-devtools.js.map -o dist/vrdom-devtools.min.js --compress --mangle"
     ]);
 
     anyspawn.spawnSeries(allTasks, {
@@ -138,7 +138,7 @@ function pack(name, suffix, entry, loaders, options, done) {
             filename: name + suffix + ".js",
             library: camelize(name + suffix),
             libraryTarget: "umd",
-            sourceMapFilename: name + suffix + ".map",
+            sourceMapFilename: name + suffix + ".js.map",
             devtoolModuleFilenameTemplate: function devtoolModuleFilenameTemplate(obj){
                 var resourcePath = obj.resourcePath.replace(/(^|[/\\])(?:([^/\\]+)(\.[^/\\.]+)|([^/\\]+))$/, "$1$2$4" + suffix + "$3");
                 return "webpack:///" + resourcePath;

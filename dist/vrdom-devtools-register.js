@@ -67,4 +67,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=vrdom-devtools-register.map
+//# sourceMappingURL=vrdom-devtools-register.js.map

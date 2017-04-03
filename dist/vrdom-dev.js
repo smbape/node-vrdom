@@ -8560,4 +8560,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=vrdom-dev.map
+//# sourceMappingURL=vrdom-dev.js.map

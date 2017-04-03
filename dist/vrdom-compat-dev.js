@@ -293,4 +293,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=vrdom-compat-dev.map
+//# sourceMappingURL=vrdom-compat-dev.js.map
