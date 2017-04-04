@@ -4491,9 +4491,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isProperty": true,
 	        "attrName": "async"
 	    },
+	    "autocapitalize": {
+	        "attrName": "autocapitalize"
+	    },
 	    "autocomplete": {
 	        "type": "String",
 	        "attrName": "autocomplete"
+	    },
+	    "autocorrect": {
+	        "attrName": "autocorrect"
 	    },
 	    "autofocus": {
 	        "type": "boolean",
@@ -4847,6 +4853,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "type": "String",
 	        "attrName": "id"
 	    },
+	    "incremental": {
+	        "attrName": "incremental"
+	    },
 	    "indeterminate": {
 	        "type": "boolean",
 	        "isBoolean": true,
@@ -4861,6 +4870,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isBoolean": true,
 	        "isProperty": true,
 	        "attrName": "ismap"
+	    },
+	    "itemid": {
+	        "attrName": "itemid"
+	    },
+	    "itemprop": {
+	        "attrName": "itemprop"
+	    },
+	    "itemref": {
+	        "attrName": "itemref"
+	    },
+	    "itemscope": {
+	        "type": "boolean",
+	        "isBoolean": true,
+	        "attrName": "itemscope"
+	    },
+	    "itemtype": {
+	        "attrName": "itemtype"
 	    },
 	    "keytype": {
 	        "type": "String",
@@ -4956,6 +4982,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isInteger": true,
 	        "isNumber": true,
 	        "attrName": "minlength"
+	    },
+	    "mozactionhint": {
+	        "attrName": "mozactionhint"
 	    },
 	    "multiple": {
 	        "type": "boolean",
@@ -5078,6 +5107,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isBoolean": true,
 	        "isProperty": true,
 	        "attrName": "required"
+	    },
+	    "results": {
+	        "attrName": "results"
 	    },
 	    "rev": {
 	        "type": "String",
@@ -5304,12 +5336,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isNumber": true,
 	        "attrName": "vspace"
 	    },
+	    "webkitDirectory": {
+	        "attrName": "webkitdirectory"
+	    },
 	    "width": {
 	        "attrName": "width"
 	    },
 	    "wrap": {
 	        "type": "String",
 	        "attrName": "wrap"
+	    },
+	    "xMozErrorMessage": {
+	        "attrName": "x-moz-errormessage"
 	    },
 	    "accentHeight": {
 	        "attrName": "accent-height"

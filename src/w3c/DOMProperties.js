@@ -52,9 +52,15 @@ module.exports = {
         "isProperty": true,
         "attrName": "async"
     },
+    "autocapitalize": {
+        "attrName": "autocapitalize"
+    },
     "autocomplete": {
         "type": "String",
         "attrName": "autocomplete"
+    },
+    "autocorrect": {
+        "attrName": "autocorrect"
     },
     "autofocus": {
         "type": "boolean",
@@ -408,6 +414,9 @@ module.exports = {
         "type": "String",
         "attrName": "id"
     },
+    "incremental": {
+        "attrName": "incremental"
+    },
     "indeterminate": {
         "type": "boolean",
         "isBoolean": true,
@@ -422,6 +431,23 @@ module.exports = {
         "isBoolean": true,
         "isProperty": true,
         "attrName": "ismap"
+    },
+    "itemid": {
+        "attrName": "itemid"
+    },
+    "itemprop": {
+        "attrName": "itemprop"
+    },
+    "itemref": {
+        "attrName": "itemref"
+    },
+    "itemscope": {
+        "type": "boolean",
+        "isBoolean": true,
+        "attrName": "itemscope"
+    },
+    "itemtype": {
+        "attrName": "itemtype"
     },
     "keytype": {
         "type": "String",
@@ -517,6 +543,9 @@ module.exports = {
         "isInteger": true,
         "isNumber": true,
         "attrName": "minlength"
+    },
+    "mozactionhint": {
+        "attrName": "mozactionhint"
     },
     "multiple": {
         "type": "boolean",
@@ -639,6 +668,9 @@ module.exports = {
         "isBoolean": true,
         "isProperty": true,
         "attrName": "required"
+    },
+    "results": {
+        "attrName": "results"
     },
     "rev": {
         "type": "String",
@@ -865,11 +897,17 @@ module.exports = {
         "isNumber": true,
         "attrName": "vspace"
     },
+    "webkitDirectory": {
+        "attrName": "webkitdirectory"
+    },
     "width": {
         "attrName": "width"
     },
     "wrap": {
         "type": "String",
         "attrName": "wrap"
+    },
+    "xMozErrorMessage": {
+        "attrName": "x-moz-errormessage"
     }
 };

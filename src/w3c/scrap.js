@@ -65,7 +65,29 @@ var options = {
         slot: true
     },
     extendedProperties: {
+        // https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input
         input: {
+            mozactionhint: {
+                attrName: "mozactionhint"
+            },
+            autocapitalize: {
+                attrName: "autocapitalize"
+            },
+            autocorrect: {
+                attrName: "autocorrect"
+            },
+            incremental: {
+                attrName: "incremental"
+            },
+            results: {
+                attrName: "results"
+            },
+            webkitDirectory: {
+                attrName: "webkitdirectory"
+            },
+            xMozErrorMessage: {
+                attrName: "x-moz-errormessage"
+            },
             capture: {
                 type: "boolean",
                 isBoolean: true,
@@ -79,7 +101,24 @@ var options = {
             },
             slot: {
                 attrName: "slot"
-            }
+            },
+            itemid: {
+                attrName: "itemid"
+            },
+            itemprop: {
+                attrName: "itemprop"
+            },
+            itemref: {
+                attrName: "itemref"
+            },
+            itemscope: {
+                type: "boolean",
+                isBoolean: true,
+                attrName: "itemscope"
+            },
+            itemtype: {
+                attrName: "itemtype"
+            },
         }
     },
     obsoleteAttributesByTagName: {}

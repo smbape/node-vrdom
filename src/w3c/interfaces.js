@@ -236,6 +236,19 @@ module.exports = {
             "dir": true,
             "draggable": true,
             "hidden": true,
+            "itemid": {
+                "attrName": "itemid"
+            },
+            "itemprop": {
+                "attrName": "itemprop"
+            },
+            "itemref": {
+                "attrName": "itemref"
+            },
+            "itemscope": true,
+            "itemtype": {
+                "attrName": "itemtype"
+            },
             "lang": true,
             "slot": {
                 "attrName": "slot"
@@ -476,7 +489,13 @@ module.exports = {
             "accept": true,
             "align": true,
             "alt": true,
+            "autocapitalize": {
+                "attrName": "autocapitalize"
+            },
             "autocomplete": true,
+            "autocorrect": {
+                "attrName": "autocorrect"
+            },
             "autofocus": true,
             "capture": true,
             "checked": true,
@@ -499,6 +518,9 @@ module.exports = {
                 "isNumber": true,
                 "attrName": "height"
             },
+            "incremental": {
+                "attrName": "incremental"
+            },
             "indeterminate": true,
             "inputMode": true,
             "max": {
@@ -511,12 +533,18 @@ module.exports = {
                 "attrName": "min"
             },
             "minLength": true,
+            "mozactionhint": {
+                "attrName": "mozactionhint"
+            },
             "multiple": true,
             "name": true,
             "pattern": true,
             "placeholder": true,
             "readOnly": true,
             "required": true,
+            "results": {
+                "attrName": "results"
+            },
             "selectionDirection": true,
             "size": {
                 "type": "unsigned long",
@@ -534,12 +562,18 @@ module.exports = {
                 "attrName": "value"
             },
             "valueAsDate": true,
+            "webkitDirectory": {
+                "attrName": "webkitdirectory"
+            },
             "width": {
                 "type": "unsigned long",
                 "isPositive": true,
                 "isInteger": true,
                 "isNumber": true,
                 "attrName": "width"
+            },
+            "xMozErrorMessage": {
+                "attrName": "x-moz-errormessage"
             }
         },
         "impls": [
