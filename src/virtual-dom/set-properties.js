@@ -383,22 +383,36 @@ function setAttribute(node, attrName, attrValue, namespace) {
         return;
     }
 
+    var currentValue;
     validAttributes[attrName] = true;
 
     if (attrValue == null) {
-        node.removeAttribute(attrName);
+        if (node.hasAttribute(attrName)) {
+            node.removeAttribute(attrName);
+        }
     } else if (namespace) {
-        node.setAttributeNS(namespace, attrName, attrValue);
+        currentValue = node.getAttributeNS(namespace, attrName);
+        if (!currentValue || currentValue !== attrValue) {
+            node.setAttributeNS(namespace, attrName, attrValue);
+        }
     } else {
+        currentValue = node.getAttribute(attrName);
         if (attrName === "value" && node.tagName === "TEXTAREA") {
             // should not render value as an attribute for textarea
-            node.value = attrValue;
+            if (node.value !== attrValue) {
+                node.value = attrValue;
+            }
         } else {
             if (attrName === "value" && hasEditableValue(node.tagName.toLowerCase(), { type: node.type })) {
                 // also set value for element with editable values
-                node.value = attrValue;
+                if (node.value !== attrValue) {
+                    node.value = attrValue;
+                }
             }
-            node.setAttribute(attrName, attrValue);
+
+            if (!currentValue || currentValue !== attrValue) {
+                node.setAttribute(attrName, attrValue);
+            }
         }
     }
 }
