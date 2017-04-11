@@ -2,6 +2,10 @@
 
 /* eslint-disable valid-jsdoc, no-empty-function */
 
+if (typeof Map === "undefined") {
+    require('core-js/fn/map');
+}
+
 const vrdom = require("vrdom"),
     expando = vrdom.expando,
     nodeMap = vrdom.nodeMap,
