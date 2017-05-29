@@ -260,6 +260,15 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
 
             if (prevValue !== nextValue) {
                 hasChanged = true;
+                if (isBoolean) {
+                    if (nextValue) {
+                        node.setAttribute(propName, "");
+                    } else {
+                        node.removeAttribute(propName);
+                    }
+                } else {
+                    node.setAttribute(propName, String(nextValue));
+                }
                 node[propName] = nextValue;
             }
         } else if (shouldRemoveAttribute(propConfig, nextValue)) {
