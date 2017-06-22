@@ -26,7 +26,7 @@ function createNode(vnode, opts) {
     var nodeMap = opts ? opts.nodeMap : null;
 
     if (vnode.isWidget) {
-        domNode = vnode.init();
+        domNode = vnode.init(opts);
     } else if (vnode.isVText) {
         domNode = doc.createTextNode(vnode.text);
         Renderer._rendered.push([vnode, "componentDidMount", []]);

@@ -59,7 +59,7 @@ ComponentWidget.prototype.getInstance = function() {
     return thunk.component;
 };
 
-ComponentWidget.prototype.init = function() {
+ComponentWidget.prototype.init = function(renderOptions) {
     var nextThunk = this.thunk;
     var domNode, vnode;
 
@@ -68,7 +68,7 @@ ComponentWidget.prototype.init = function() {
 
     try {
         vnode = nextThunk.vnode = Renderer.toVNode(nextThunk.render(), this.key, this, 0, this.childContext);
-        domNode = createNode(vnode, Renderer.renderOptions);
+        domNode = createNode(vnode, renderOptions);
         domNode = this.didMountOrUpdate(nextThunk, domNode, this);
     } finally {
         if (!this.delayEnd) {
@@ -81,7 +81,7 @@ ComponentWidget.prototype.init = function() {
     return domNode;
 };
 
-ComponentWidget.prototype.update = function(nextElement, domNode, nextContext) {
+ComponentWidget.prototype.update = function(nextElement, domNode, nextContext, renderOptions) {
     var prevWidget = this,
         prevThunk = prevWidget.thunk,
         prevVNode = prevThunk.vnode;
@@ -103,7 +103,7 @@ ComponentWidget.prototype.update = function(nextElement, domNode, nextContext) {
         }
 
         nextChildElement = prevThunk.render(nextElement, nextContext);
-        vnode = updateTree(prevVNode, nextChildElement, Renderer.renderOptions, prevWidget.childContext);
+        vnode = updateTree(prevVNode, nextChildElement, renderOptions, prevWidget.childContext);
         newNode = vnode.node;
 
         if (vnode !== prevVNode) {
@@ -345,7 +345,7 @@ ComponentWidget.prototype.getPublicContext = function(type, context) {
     return this.emptyPublicContext;
 };
 
-ComponentWidget.prototype.destroy = function(domNode, placeholder) {
+ComponentWidget.prototype.destroy = function(domNode, placeholder, renderOptions) {
     var type = this.type,
         thunk = this.thunk,
         _type = thunk._type,
@@ -377,7 +377,7 @@ ComponentWidget.prototype.destroy = function(domNode, placeholder) {
         thunk.willUnmount();
     }
 
-    placeholder = updateTree(vnode, placeholder, Renderer.renderOptions);
+    placeholder = updateTree(vnode, placeholder, renderOptions);
     if (placeholder) {
         domNode = placeholder.node;
     }

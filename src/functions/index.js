@@ -14,6 +14,7 @@ module.exports = {
     flattenChildren: require("./flattenChildren"),
     getCanonicalKey: require("./getCanonicalKey"),
     getDisplayName: require("./getDisplayName"),
+    getExpandoData: require("./getExpandoData"),
     getFunctionName: require("./getFunctionName"),
     getIteratorMethod: require("./getIteratorMethod"),
     getKeyAndPrefixFromCanonicalKey: require("./getKeyAndPrefixFromCanonicalKey"),

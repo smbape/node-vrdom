@@ -371,7 +371,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * https://github.com/facebook/react-devtools/blob/e31ec5825342eda570acfc9bcb43a44258fceb28/backend/attachRenderer.js
 	 * for how the devtools consumes the resulting objects.
 	 */
-	function createDevToolsBridge() {
+	function createDevToolsBridge(global) {
+	    var document = global.document;
+	
 	    // The devtools has different paths for interacting with the renderers from
 	    // React Native, legacy React DOM and current React DOM.
 	    //
@@ -567,13 +569,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * components correctly, so it should be called before the root component(s)
 	 * are rendered.
 	 */
-	function register() {
+	function register(global) {
+	    if (global == null) {
+	        global = window;
+	    }
+	
+	    var __REACT_DEVTOOLS_GLOBAL_HOOK__ = global.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+	
 	    if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || registered) {
 	        // React DevTools are not installed
 	        return;
 	    }
 	
-	    var bridge = createDevToolsBridge();
+	    var bridge = createDevToolsBridge(global);
 	    componentDidMountHook = bridge.componentDidMount;
 	    componentDidUpdateHook = bridge.componentDidUpdate;
 	    componentWillUnmountHook = bridge.componentWillUnmount;

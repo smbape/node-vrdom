@@ -285,7 +285,9 @@ function findRoots(childNodes, roots, Mount, Reconciler) {
  * https://github.com/facebook/react-devtools/blob/e31ec5825342eda570acfc9bcb43a44258fceb28/backend/attachRenderer.js
  * for how the devtools consumes the resulting objects.
  */
-function createDevToolsBridge() {
+function createDevToolsBridge(global) {
+    const document = global.document;
+
     // The devtools has different paths for interacting with the renderers from
     // React Native, legacy React DOM and current React DOM.
     //
@@ -479,13 +481,19 @@ let componentDidMountHook, componentDidUpdateHook, componentWillUnmountHook;
  * components correctly, so it should be called before the root component(s)
  * are rendered.
  */
-export function register() {
+export function register(global) {
+    if (global == null) {
+        global = window;
+    }
+
+    const __REACT_DEVTOOLS_GLOBAL_HOOK__ = global.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+
     if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || registered) {
         // React DevTools are not installed
         return;
     }
 
-    const bridge = createDevToolsBridge();
+    const bridge = createDevToolsBridge(global);
     componentDidMountHook = bridge.componentDidMount;
     componentDidUpdateHook = bridge.componentDidUpdate;
     componentWillUnmountHook = bridge.componentWillUnmount;

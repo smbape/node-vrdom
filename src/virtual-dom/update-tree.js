@@ -143,7 +143,7 @@ function updateVNode(a, b, renderOptions, context) {
         Renderer._rendered.push([a]);
     }
 
-    a.update(b);
+    a.update(b, null, null, renderOptions);
 
     return a;
 }
@@ -257,7 +257,7 @@ function removeNode(prevVNode, placeholder, renderOptions) {
     var nextNode;
 
     if (prevVNode.isVNode || prevVNode.isWidget) {
-        prevNode = prevVNode.destroy(prevNode, placeholder);
+        prevNode = prevVNode.destroy(prevNode, placeholder, renderOptions);
     }
 
     if (prevNode.parentNode) {
@@ -309,7 +309,7 @@ function updateWidget(prevVNode, nextElement, renderOptions, context) {
 
     if (prevVNode.isWidget) {
         // same widget type, do a widget.update
-        nextNode = prevVNode.update(nextElement, prevNode, context);
+        nextNode = prevVNode.update(nextElement, prevNode, context, renderOptions);
     } else {
         nextWidget = Renderer.toVNode(nextElement, prevVNode.prefix, prevVNode.parent, prevVNode.originalKey, context);
         nextNode = createNode(nextWidget, renderOptions);

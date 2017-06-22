@@ -6,6 +6,7 @@ var functions = require("./functions"),
     getDisplayName = functions.getDisplayName,
     getDisplayRender = functions.getDisplayRender,
     /// #endif
+    assign = functions.assign,
     getCanonicalKey = functions.getCanonicalKey,
     getVNodeFromMap = functions.getVNodeFromMap,
     hasProp = functions.hasProp,
@@ -164,7 +165,10 @@ Renderer.unmountComponentAtNode = function(container) {
         return;
     }
 
-    updateTree(rootVNode, null, Renderer.renderOptions);
+    var renderOptions = assign({}, Renderer.renderOptions, {
+        document: container.ownerDocument
+    });
+    updateTree(rootVNode, null, renderOptions);
 
     // eslint-disable-next-line guard-for-in
     for (var prop in inst) {
@@ -245,6 +249,9 @@ Renderer.render = function(element, container, callback) {
     var renderedCheckpoint = Renderer._rendered.length;
     var performAfterUpdates = Renderer._performAfterUpdates;
     var topComponent;
+    var renderOptions = assign({}, Renderer.renderOptions, {
+        document: container.ownerDocument
+    });
 
     if (performAfterUpdates) {
         Renderer._performAfterUpdates = false;
@@ -255,7 +262,7 @@ Renderer.render = function(element, container, callback) {
             if (vnode.isWidget) {
                 vnode.willReceive = true;
             }
-            updateTree(vnode, element, Renderer.renderOptions, vnode.context);
+            updateTree(vnode, element, renderOptions, vnode.context);
         } else {
             vnode = Renderer.toVNode(element);
 
@@ -268,7 +275,7 @@ Renderer.render = function(element, container, callback) {
                 /// #endif
             }
 
-            var rootNode = createNode(vnode, Renderer.renderOptions);
+            var rootNode = createNode(vnode, renderOptions);
             container.appendChild(rootNode);
         }
     } finally {
@@ -290,7 +297,7 @@ Renderer.render = function(element, container, callback) {
                 });
             }
 
-            executeCallback(callback, vnode.getInstance(Renderer.renderOptions));
+            executeCallback(callback, vnode.getInstance(renderOptions));
 
             processWidgetPendingState(vnode);
             if (performAfterUpdates) {
@@ -301,7 +308,7 @@ Renderer.render = function(element, container, callback) {
         }
 
         if (vnode != null) {
-            topComponent = vnode.getInstance(Renderer.renderOptions);
+            topComponent = vnode.getInstance(renderOptions);
         }
     }
 
@@ -364,9 +371,12 @@ Renderer.updateState = function(method, component, state, replace, callback) {
     }
 
     vnode.enqueueState(method, state, replace);
+    var renderOptions = assign({}, Renderer.renderOptions, {
+        document: vnode.node.ownerDocument
+    });
 
     try {
-        updateTree(vnode, vnode.element, Renderer.renderOptions, component.context);
+        updateTree(vnode, vnode.element, renderOptions, component.context);
     } finally {
         processRendered(renderedCheckpoint);
         executeCallback(callback, component);
@@ -431,7 +441,7 @@ function processRendered(renderedCheckpoint) {
         if (vnode.callbacks) {
             callbacks = vnode.callbacks;
             vnode.callbacks = undefined;
-            component = vnode.getInstance(Renderer.renderOptions);
+            component = vnode.getInstance();
 
             for (var j = 0, lenj = callbacks.length; j < lenj; j++) {
                 executeCallback(callbacks[j], component);
@@ -457,7 +467,7 @@ function processWidgetPendingState(widget) {
         pendingState = widget.pendingState,
         pendingReplace = widget.pendingReplace,
         pendingCallbacks = widget.pendingCallbacks,
-        component = widget.getInstance(Renderer.renderOptions);
+        component = widget.getInstance();
 
     widget.pendingMethod = undefined;
     widget.pendingState = undefined;

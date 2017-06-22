@@ -338,7 +338,6 @@ assign(exports, {
     expando: expando,
     hooks: hooks,
     functions: functions,
-    renderOptions: Renderer.renderOptions,
     LinkUtils: require("./controls/LinkUtils"),
     DOM: (function() {
         var DOM = {};
