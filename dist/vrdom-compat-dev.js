@@ -8,7 +8,6 @@
 	else
 		root["vrdomCompatDev"] = factory(root["vrdomDev"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
-'use strict'
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -53,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var vrdom = __webpack_require__(1),
 	    expando = vrdom.expando,
@@ -111,15 +110,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	module.exports = vrdom;
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	var hasProp = Object.prototype.hasOwnProperty,
 	    toString = Object.prototype.toString;
@@ -289,7 +288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return "function" === typeof obj;
 	}
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
