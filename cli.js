@@ -67,7 +67,7 @@ var commands = {
             return;
         }
 
-        var argv = JSON.parse(process.env.npm_config_argv);
+        var argv = process.env.npm_config_argv ? JSON.parse(process.env.npm_config_argv) : { remain: [] };
         if (argv.remain.length !== 0) {
             next();
             return;

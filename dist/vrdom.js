@@ -3252,21 +3252,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function addEventListener(type, nextProps, node, eventName, value, local) {
-	    var data;
+	    var data,
+	        events,
+	        removeEventListeners = [];
 	
 	    var context = {
 	        local: local,
-	        value: value
+	        handler: value,
+	        eventName: eventName
 	    };
 	
 	    if (eventName === "Change") {
-	        eventName = getChangeEventName(type, nextProps);
+	        events = getChangeEventName(type, nextProps);
+	        context.events = events;
 	        if (hasProp.call(controls.onChange, type)) {
-	            context.value = controls.onChange[type](type, nextProps);
+	            context.handler = controls.onChange[type](type, nextProps);
 	        }
+	    } else {
+	        events = eventName;
 	    }
 	
-	    EventListener.addEventListener(context, node, eventName);
+	    if (Array.isArray(events)) {
+	        events.forEach(function (eventName) {
+	            EventListener.addEventListener(context, node, eventName);
+	            if (context.removeEventListener) {
+	                removeEventListeners.push(context.removeEventListener);
+	                delete context.removeEventListener;
+	            }
+	        });
+	
+	        if (removeEventListeners.length !== 0) {
+	            context.removeEventListener = removeEventListeners;
+	        }
+	    } else {
+	        EventListener.addEventListener(context, node, events);
+	    }
 	
 	    if (context.removeEventListener) {
 	        data = setExpandoData(node, {});
@@ -3307,6 +3327,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	
+	    if (Array.isArray(context.removeEventListener)) {
+	        context.removeEventListener.forEach(function (removeEventListener) {
+	            removeEventListener();
+	        });
+	        delete context.removeEventListener;
+	        return;
+	    }
+	
 	    EventListener.removeEventListener(context, node, eventName);
 	}
 	
@@ -3319,16 +3347,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function getChangeEventName(type, props) {
-	    if (type === "select" || type === "input" && props.type === "file") {
-	        return "Change";
-	    }
-	
-	    if (hasEditableValue(type, props)) {
-	        return "input";
-	    }
-	
-	    if (type === "input" && (props.type === "checkbox" || props.type === "radio")) {
-	        return "click";
+	    if (hasEditableValue(type, props) && type !== "select") {
+	        return ["input", "change"];
 	    }
 	
 	    return "Change";
@@ -3738,7 +3758,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (target !== node) {
 	        // listen to event on target
-	        context.removeEventListener = addEventListener(target, eventType, context.value, useCapture);
+	        context.removeEventListener = addEventListener(target, eventType, context.handler, useCapture);
 	        return;
 	    }
 	
@@ -3751,7 +3771,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    var events = EvStore(node);
-	    events[eventName] = context.value;
+	    events[eventName] = context.handler;
 	};
 	
 	EventListener.removeEventListener = function (context, node, eventName) {

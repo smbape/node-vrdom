@@ -60,7 +60,7 @@ EventListener.addEventListener = function(context, node, eventName) {
 
     if (target !== node) {
         // listen to event on target
-        context.removeEventListener = addEventListener(target, eventType, context.value, useCapture);
+        context.removeEventListener = addEventListener(target, eventType, context.handler, useCapture);
         return;
     }
 
@@ -73,7 +73,7 @@ EventListener.addEventListener = function(context, node, eventName) {
     }
 
     var events = EvStore(node);
-    events[eventName] = context.value;
+    events[eventName] = context.handler;
 };
 
 EventListener.removeEventListener = function(context, node, eventName) {

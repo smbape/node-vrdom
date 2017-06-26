@@ -2,8 +2,14 @@
 
 /* eslint-disable valid-jsdoc, no-empty-function */
 
-if (typeof Map === "undefined") {
-    require('core-js/fn/map');
+if (typeof Symbol !== "function" || !Symbol.iterator) {
+    require("core-js/fn/symbol");
+}
+
+var ITERATOR_SYMBOL = typeof Symbol === "function" && Symbol.iterator;
+
+if (typeof Map !== "function" || typeof Map.prototype[ITERATOR_SYMBOL] !== "function") {
+    require("core-js/fn/map");
 }
 
 const vrdom = require("vrdom"),
