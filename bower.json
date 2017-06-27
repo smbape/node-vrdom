@@ -1,7 +1,7 @@
 {
   "name": "vrdom",
   "description": "An alternative to react production build for browser side.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "dist/vrdom.js",
   "author": "Stéphane MBAPE",
   "homepage": "https://github.com/smbape/node-vrdom",
