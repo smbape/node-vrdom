@@ -3258,13 +3258,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var context = {
 	        local: local,
-	        handler: value,
-	        eventName: eventName
+	        handler: value
 	    };
 	
 	    if (eventName === "Change") {
 	        events = getChangeEventName(type, nextProps);
-	        context.events = events;
 	        if (hasProp.call(controls.onChange, type)) {
 	            context.handler = controls.onChange[type](type, nextProps);
 	        }
@@ -3302,12 +3300,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function removeEventListener(type, props, node, eventName) {
-	    var inst, data;
+	    var inst, data, events;
 	
 	    var context = EMPTY_OBJECT;
 	
 	    if (eventName === "Change") {
-	        eventName = getChangeEventName(type, props);
+	        events = getChangeEventName(type, props);
+	    } else {
+	        events = eventName;
 	    }
 	
 	    if (hasProp.call(node, expando)) {
@@ -3331,11 +3331,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        context.removeEventListener.forEach(function (removeEventListener) {
 	            removeEventListener();
 	        });
+	
 	        delete context.removeEventListener;
 	        return;
 	    }
 	
-	    EventListener.removeEventListener(context, node, eventName);
+	    if (Array.isArray(events)) {
+	        events.forEach(function (eventName) {
+	            EventListener.removeEventListener(context, node, eventName);
+	        });
+	    } else {
+	        EventListener.removeEventListener(context, node, events);
+	    }
 	}
 	
 	function shouldRemoveAttribute(config, value) {
