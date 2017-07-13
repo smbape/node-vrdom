@@ -1,3 +1,4 @@
+var getOwnerDocument = require("../functions/getOwnerDocument");
 var hasProp = require("../functions/hasProp");
 var expando = require("../expando");
 var destroyers = require("../destroyers");
@@ -20,40 +21,51 @@ var EventListener = exports;
 // var DOCUMENT_FRAGMENT_NODE = 11; // Node.DOCUMENT_FRAGMENT_NODE == 11
 // var NOTATION_NODE = 12; // Node.NOTATION_NODE == 12
 
-EventListener.addEventListener = function(context, node, eventName) {
-    // var ownerDocument = node.nodeType === DOCUMENT_FRAGMENT_NODE ? node : node.ownerDocument;
-    var ownerDocument = node.ownerDocument;
+EventListener.addEventListener = function(context, node, eventName, eventType) {
+    var ownerDocument = getOwnerDocument(node);
 
     var delegator;
-    if (hasProp.call(ownerDocument, expando + "_delegator")) {
+    // on Edge and when ownerDocument is iframe.contentDocument
+    // delete is not authorized
+    if (ownerDocument[expando + "_delegator"] != null) {
         delegator = ownerDocument[expando + "_delegator"];
         ownerDocument = null; //unref
     } else {
         delegator = ownerDocument[expando + "_delegator"] = new EventDispatcher(ownerDocument);
         destroyers.running.push(function() {
-            delete ownerDocument[expando + "_delegator"];
+            // ownerDocument may an iframe document
+            // Edge throw when accessing ownerDocument when iframe is removed from DOM
+            try {
+                delete ownerDocument[expando + "_delegator"];
+            } catch(e) {
+                // Nothing to do
+            }
             ownerDocument = null;
         });
     }
 
-    var config, useCapture, target, eventType, isLocal;
-    if (eventName in Events) {
-        config = Events[eventName];
+    var config, useCapture, target, isLocal;
+    if (eventType in Events) {
+        config = Events[eventType];
         eventType = config.eventType;
         useCapture = config.useCapture;
         target = config.target || node;
         isLocal = hasProp.call(config, "local");
     } else {
-        eventType = eventName.toLowerCase();
+        eventType = eventType.toLowerCase();
         useCapture = false;
         target = node;
+    }
+
+    if (eventName === "load" && node.nodeName === "BODY") {
+        target = node.ownerDocument.defaultView;
     }
 
     var handler, removeEventListener;
 
     if (context.local) {
         // listen to local events on node and simulate bubble
-        handler = delegator.getHandler(eventName);
+        handler = delegator.getHandler(eventName, eventType);
         context.removeEventListener = addEventListener(node, eventType, handler, useCapture);
         return;
     }
@@ -73,18 +85,24 @@ EventListener.addEventListener = function(context, node, eventName) {
     }
 
     var events = EvStore(node);
-    events[eventName] = context.handler;
+    events[EventDispatcher.getKey(eventName, eventType)] = context.handler;
 };
 
-EventListener.removeEventListener = function(context, node, eventName) {
+EventListener.removeEventListener = function(context, node, eventName, eventType) {
     if (context.removeEventListener) {
         context.removeEventListener();
         context.removeEventListener = undefined;
         return;
     }
 
+    if (eventType in Events) {
+        eventType = Events[eventType].eventType;
+    } else {
+        eventType = eventType.toLowerCase();
+    }
+
     var events = EvStore(node);
-    events[eventName] = undefined;
+    events[EventDispatcher.getKey(eventName, eventType)] = undefined;
 };
 
 function addEventListener(target, eventType, handler, useCapture) {

@@ -70,6 +70,7 @@ ComponentWidget.prototype.init = function(renderOptions) {
         vnode = nextThunk.vnode = Renderer.toVNode(nextThunk.render(), this.key, this, 0, this.childContext);
         domNode = createNode(vnode, renderOptions);
         domNode = this.didMountOrUpdate(nextThunk, domNode, this);
+        this.componentWillDOMMount(domNode);
     } finally {
         if (!this.delayEnd) {
             // an error occured before end process
@@ -103,6 +104,7 @@ ComponentWidget.prototype.update = function(nextElement, domNode, nextContext, r
         }
 
         nextChildElement = prevThunk.render(nextElement, nextContext);
+        // this.componentWillDOMUpdate(prevThunk, domNode);
         vnode = updateTree(prevVNode, nextChildElement, renderOptions, prevWidget.childContext);
         newNode = vnode.node;
 
@@ -175,6 +177,32 @@ ComponentWidget.prototype.didMountOrUpdate = function(nextThunk, domNode, widget
     this.delayEnd = true;
     return domNode;
 };
+
+ComponentWidget.prototype.componentWillDOMMount = function(domNode) {
+    var thunk = this.thunk,
+        component = thunk.component,
+        _type = thunk._type;
+
+    if (_type !== "Stateless" && component.componentWillDOMMount) {
+        component.componentWillDOMMount(domNode);
+    }
+};
+
+// ComponentWidget.prototype.componentWillDOMUpdate = function(nextThunk, domNode) {
+//     var component = nextThunk.component,
+//         _type = nextThunk._type;
+
+//     var prevProps, prevState, prevContext;
+//     if (nextThunk.updated) {
+//         prevProps = nextThunk.prevProps;
+//         prevState = nextThunk.prevState;
+//         prevContext = nextThunk.prevContext;
+
+//         if (_type !== "Stateless" && component.componentWillDOMUpdate) {
+//             component.componentWillDOMUpdate(domNode, prevProps, prevState, prevContext);
+//         }
+//     }
+// };
 
 ComponentWidget.prototype.componentDidMount = function() {
     var thunk = this.thunk,

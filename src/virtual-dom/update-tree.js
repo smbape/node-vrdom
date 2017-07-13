@@ -8,8 +8,10 @@ var setProperties = require("./set-properties");
 var createNode = require("./create-node");
 
 var functions = require("../functions");
+var assign = functions.assign;
 var flattenChildren = functions.flattenChildren;
 var getKeyAndPrefixFromCanonicalKey = functions.getKeyAndPrefixFromCanonicalKey;
+var getOwnerDocument = functions.getOwnerDocument;
 var hasProp = functions.hasProp;
 var isObject = functions.isObject;
 var updateNodeMap = functions.updateNodeMap;
@@ -262,7 +264,9 @@ function removeNode(prevVNode, placeholder, renderOptions) {
 
     if (prevNode.parentNode) {
         if (placeholder) {
-            nextNode = createNode(placeholder, renderOptions);
+            nextNode = createNode(placeholder, assign({}, renderOptions, {
+                document: getOwnerDocument(prevNode.parentNode)
+            }));
             prevNode.parentNode.replaceChild(nextNode, prevNode);
         } else {
             prevNode.parentNode.removeChild(prevNode);
@@ -277,7 +281,9 @@ function removeNode(prevVNode, placeholder, renderOptions) {
 function insertNode(nextVNode, referenceVNodeIndex, parentVNode, renderOptions) {
     var parentNode = parentVNode.node;
 
-    var nextNode = createNode(nextVNode, renderOptions);
+    var nextNode = createNode(nextVNode, assign({}, renderOptions, {
+        document: getOwnerDocument(parentNode)
+    }));
 
     var referenceNode = referenceVNodeIndex == null || referenceVNodeIndex >= parentNode.childNodes.length ? null : parentNode.childNodes[referenceVNodeIndex];
     parentNode.insertBefore(nextNode, referenceNode);
@@ -312,7 +318,10 @@ function updateWidget(prevVNode, nextElement, renderOptions, context) {
         nextNode = prevVNode.update(nextElement, prevNode, context, renderOptions);
     } else {
         nextWidget = Renderer.toVNode(nextElement, prevVNode.prefix, prevVNode.parent, prevVNode.originalKey, context);
-        nextNode = createNode(nextWidget, renderOptions);
+
+        nextNode = createNode(nextWidget, assign({}, renderOptions, {
+            document: getOwnerDocument(prevNode.parentNode)
+        }));
     }
 
     var parentNode = prevNode.parentNode;
@@ -340,8 +349,9 @@ function replaceVTextWithVNode(prevVNode, nextElement, renderOptions, context) {
     var parentNode = prevNode.parentNode;
 
     var nextVNode = Renderer.toVNode(nextElement, prevVNode.prefix, prevVNode.parent, prevVNode.originalKey, context);
-    var nextNode = createNode(nextVNode, renderOptions);
-
+    var nextNode = createNode(nextVNode, assign({}, renderOptions, {
+        document: getOwnerDocument(parentNode)
+    }));
     cleanDOMNode(prevNode);
     parentNode.replaceChild(nextNode, prevNode);
 

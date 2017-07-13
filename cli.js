@@ -22,6 +22,7 @@ var rootBowerFile = sysPath.join(__dirname, "bower.json");
 var commands = {
     prepublish: distribute,
     lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
+    "lint-fix": "node node_modules/eslint/bin/eslint.js --fix \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
 
     version: [

@@ -267,14 +267,22 @@ function toReactComponent(vnode, noUpdate) {
  */
 function findRoots(childNodes, roots, Mount, Reconciler) {
     for (let i = 0, len = childNodes.length; i < len; i++) {
-        let child = childNodes[i];
+        const child = childNodes[i];
 
         if (hasProp.call(child, expando) && hasProp.call(child[expando], "rootVNode")) {
             let rootVNode = child[expando].rootVNode;
             toReactTopLevelWrapper(rootVNode, roots, Mount, Reconciler);
         }
 
-        findRoots(child.childNodes, roots, Mount, Reconciler);
+        let nestedChildNodes = child.childNodes;
+        if (child.nodeName && child.nodeName.toUpperCase() === "IFRAME") {
+            try {
+                nestedChildNodes = [child.contentDocument];
+            } catch(e) {
+                // Nothing to do
+            }
+        }
+        findRoots(nestedChildNodes, roots, Mount, Reconciler);
     }
 }
 

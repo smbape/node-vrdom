@@ -24,6 +24,7 @@ var ComponentInterface = {
     getChildContext: OverrideAction.MERGE_RESULTS,
     render: OverrideAction.LAST_DEFINED,
     componentWillMount: OverrideAction.CHAIN_METHODS,
+    componentWillDOMMount: OverrideAction.CHAIN_METHODS,
     componentDidMount: OverrideAction.CHAIN_METHODS,
     componentWillReceiveProps: OverrideAction.CHAIN_METHODS,
     shouldComponentUpdate: OverrideAction.LAST_DEFINED,

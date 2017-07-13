@@ -360,7 +360,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            toReactTopLevelWrapper(rootVNode, roots, Mount, Reconciler);
 	        }
 	
-	        findRoots(child.childNodes, roots, Mount, Reconciler);
+	        var nestedChildNodes = child.childNodes;
+	        if (child.nodeName && child.nodeName.toUpperCase() === "IFRAME") {
+	            try {
+	                nestedChildNodes = [child.contentDocument];
+	            } catch (e) {
+	                // Nothing to do
+	            }
+	        }
+	        findRoots(nestedChildNodes, roots, Mount, Reconciler);
 	    }
 	}
 	

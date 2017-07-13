@@ -52,7 +52,7 @@ function setProperties(vnode, node, nextProps, prevProps) {
     var type = element.type;
     var isCustomTag, hasChanged;
 
-    nextProps = normalizeDomProps(type, nextProps, isCustomTag);
+    nextProps = normalizeDomProps(type, nextProps);
 
     if (nextProps == null) {
         isCustomTag = prevProps.is != null || type.indexOf("-") !== -1;
@@ -129,8 +129,8 @@ function setProperties(vnode, node, nextProps, prevProps) {
     return hasChanged;
 }
 
-function normalizeDomProps(type, props, isCustomTag) {
-    if (isCustomTag || props == null) {
+function normalizeDomProps(type, props) {
+    if (props == null) {
         return props;
     }
 
@@ -427,7 +427,7 @@ function setAttribute(node, attrName, attrValue, namespace) {
 }
 
 function addEventListener(type, nextProps, node, eventName, value, local) {
-    var data, events, removeEventListeners = [];
+    var data, eventType, removeEventListeners = [];
 
     var context = {
         local: local,
@@ -435,17 +435,17 @@ function addEventListener(type, nextProps, node, eventName, value, local) {
     };
 
     if (eventName === "Change") {
-        events = getChangeEventName(type, nextProps);
+        eventType = getChangeEventName(type, nextProps);
         if (hasProp.call(controls.onChange, type)) {
             context.handler = controls.onChange[type](type, nextProps);
         }
     } else {
-        events = eventName;
+        eventType = eventName;
     }
 
-    if (Array.isArray(events)) {
-        events.forEach(function(eventName) {
-            EventListener.addEventListener(context, node, eventName);
+    if (Array.isArray(eventType)) {
+        eventType.forEach(function(eventType) {
+            EventListener.addEventListener(context, node, eventName, eventType);
             if (context.removeEventListener) {
                 removeEventListeners.push(context.removeEventListener);
                 delete context.removeEventListener;
@@ -456,7 +456,7 @@ function addEventListener(type, nextProps, node, eventName, value, local) {
             context.removeEventListener = removeEventListeners;
         }
     } else {
-        EventListener.addEventListener(context, node, events);
+        EventListener.addEventListener(context, node, eventName, eventType);
     }
 
     if (context.removeEventListener) {
@@ -473,14 +473,14 @@ function addEventListener(type, nextProps, node, eventName, value, local) {
 }
 
 function removeEventListener(type, props, node, eventName) {
-    var inst, data, events;
+    var inst, data, eventType;
 
     var context = EMPTY_OBJECT;
 
     if (eventName === "Change") {
-        events = getChangeEventName(type, props);
+        eventType = getChangeEventName(type, props);
     } else {
-        events = eventName;
+        eventType = eventName;
     }
 
     if (hasProp.call(node, expando)) {
@@ -509,12 +509,12 @@ function removeEventListener(type, props, node, eventName) {
         return;
     }
 
-    if (Array.isArray(events)) {
-        events.forEach(function(eventName) {
-            EventListener.removeEventListener(context, node, eventName);
-        })
+    if (Array.isArray(eventType)) {
+        eventType.forEach(function(eventType) {
+            EventListener.removeEventListener(context, node, eventName, eventType);
+        });
     } else {
-        EventListener.removeEventListener(context, node, events);
+        EventListener.removeEventListener(context, node, eventName, eventType);
     }
 }
 

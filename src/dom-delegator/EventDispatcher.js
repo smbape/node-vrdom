@@ -8,9 +8,13 @@ var addWheelListener = require("./addWheelListener");
 var Renderer;
 
 function EventDispatcher(document) {
-    this.target = document.documentElement;
+    this.target = document;
     this.handlers = {};
 }
+
+EventDispatcher.getKey = function(eventName, eventType) {
+    return eventName + ":" + eventType;
+};
 
 EventDispatcher.prototype.addEventListener = function(eventName, eventType, useCapture) {
     var handlers = this.handlers;
@@ -20,7 +24,8 @@ EventDispatcher.prototype.addEventListener = function(eventName, eventType, useC
     }
 
     var target = this.target;
-    var listener = this.getHandler(eventName);
+
+    var listener = this.getHandler(eventName, eventType);
     if (eventType === "wheel") {
         return addWheelListener(target, listener, useCapture);
     }
@@ -29,25 +34,26 @@ EventDispatcher.prototype.addEventListener = function(eventName, eventType, useC
 
     return function removeEventListener() {
         target.removeEventListener(eventType, listener, useCapture);
-        delete handlers[eventName];
+        delete handlers[EventDispatcher.getKey(eventName, eventType)];
         handlers = null;
         target = null;
         listener = null;
     };
 };
 
-EventDispatcher.prototype.getHandler = function(eventName) {
+EventDispatcher.prototype.getHandler = function(eventName, eventType) {
     var handlers = this.handlers;
+    var key = EventDispatcher.getKey(eventName, eventType);
 
-    if (hasProp.call(handlers, eventName)) {
-        return handlers[eventName];
+    if (hasProp.call(handlers, key)) {
+        return handlers[key];
     }
 
-    var handler = handlers[eventName] = eventHandler.bind(this, eventName);
+    var handler = handlers[key] = eventHandler.bind(this, eventName, eventType);
     return handler;
 };
 
-function eventHandler(eventName, evt) {
+function eventHandler(eventName, eventType, evt) {
     var ret;
 
     var process = false;
@@ -58,7 +64,7 @@ function eventHandler(eventName, evt) {
     }
 
     try {
-        ret = dispatchEvent(eventName, evt, evt.target);
+        ret = dispatchEvent(eventName, eventType, evt, evt.target);
     } finally {
         if (process) {
             Renderer.processEventHandler();
@@ -69,13 +75,15 @@ function eventHandler(eventName, evt) {
     return ret;
 }
 
-function dispatchEvent(eventName, evt, currentTarget) {
+function dispatchEvent(eventName, eventType, evt, currentTarget) {
     var ret, intermediateRet, proxyEvent;
-    var handle = getClosestHandle(currentTarget, eventName);
+    var handle = getClosestHandle(currentTarget, eventName, eventType);
 
     if (handle && handle.handlers.length > 0) {
         currentTarget = handle.currentTarget;
-        proxyEvent = new ProxyEvent(evt, eventName, { currentTarget: currentTarget });
+        proxyEvent = new ProxyEvent(evt, eventName, {
+            currentTarget: currentTarget
+        });
 
         intermediateRet = executeHandlers(handle.handlers, proxyEvent);
         if (intermediateRet === false) {
@@ -83,7 +91,7 @@ function dispatchEvent(eventName, evt, currentTarget) {
         }
 
         if (!proxyEvent._isPropagationStopped) {
-            intermediateRet = dispatchEvent(eventName, evt, currentTarget.parentNode);
+            intermediateRet = dispatchEvent(eventName, eventType, evt, currentTarget.parentNode);
             if (intermediateRet === false) {
                 ret = false;
             }
@@ -93,16 +101,16 @@ function dispatchEvent(eventName, evt, currentTarget) {
     return ret;
 }
 
-function getClosestHandle(currentTarget, eventName) {
+function getClosestHandle(currentTarget, eventName, eventType) {
     if (currentTarget == null) {
         return null;
     }
 
     var events = EvStore(currentTarget);
-    var handlers = events[eventName];
+    var handlers = events[EventDispatcher.getKey(eventName, eventType)];
 
     if (!handlers) {
-        return getClosestHandle(currentTarget.parentNode, eventName);
+        return getClosestHandle(currentTarget.parentNode, eventName, eventType);
     }
 
     return {

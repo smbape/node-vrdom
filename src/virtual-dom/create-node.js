@@ -1,14 +1,16 @@
-module.exports = createNode;
-
 var globalDocument = require("global/document");
 
 var setProperties = require("./set-properties");
 
 var functions = require("../functions");
+var assign = functions.assign;
 var getKeyAndPrefixFromCanonicalKey = functions.getKeyAndPrefixFromCanonicalKey;
+var getOwnerDocument = functions.getOwnerDocument;
 var isObject = functions.isObject;
 var setExpandoData = functions.setExpandoData;
 var updateNodeMap = functions.updateNodeMap;
+
+module.exports = createNode;
 
 var Renderer = require("../Renderer");
 
@@ -23,7 +25,7 @@ function createNode(vnode, opts) {
     }
 
     var doc = opts.document ? opts.document : globalDocument;
-    var nodeMap = opts ? opts.nodeMap : null;
+    var nodeMap = opts.nodeMap;
 
     if (vnode.isWidget) {
         domNode = vnode.init(opts);
@@ -56,6 +58,9 @@ function createNode(vnode, opts) {
         } else {
             var child, keyPrefix;
             var childContext = vnode.context;
+            opts = assign({}, opts, {
+                document: getOwnerDocument(domNode)
+            });
 
             // eslint-disable-next-line guard-for-in
             for (var canonicalKey in children) {

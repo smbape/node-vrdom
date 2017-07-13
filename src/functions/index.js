@@ -18,6 +18,7 @@ module.exports = {
     getFunctionName: require("./getFunctionName"),
     getIteratorMethod: require("./getIteratorMethod"),
     getKeyAndPrefixFromCanonicalKey: require("./getKeyAndPrefixFromCanonicalKey"),
+    getOwnerDocument: require("./getOwnerDocument"),
     getVNodeFromMap: require("./getVNodeFromMap"),
     hasEditableValue: require("./hasEditableValue"),
     hasProp: require("./hasProp"),

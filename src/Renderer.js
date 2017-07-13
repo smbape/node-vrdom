@@ -8,6 +8,7 @@ var functions = require("./functions"),
     /// #endif
     assign = functions.assign,
     getCanonicalKey = functions.getCanonicalKey,
+    getOwnerDocument = functions.getOwnerDocument,
     getVNodeFromMap = functions.getVNodeFromMap,
     hasProp = functions.hasProp,
     isValidContainer = functions.isValidContainer,
@@ -166,7 +167,7 @@ Renderer.unmountComponentAtNode = function(container) {
     }
 
     var renderOptions = assign({}, Renderer.renderOptions, {
-        document: container.ownerDocument
+        document: getOwnerDocument(container)
     });
     updateTree(rootVNode, null, renderOptions);
 
@@ -250,7 +251,7 @@ Renderer.render = function(element, container, callback) {
     var performAfterUpdates = Renderer._performAfterUpdates;
     var topComponent;
     var renderOptions = assign({}, Renderer.renderOptions, {
-        document: container.ownerDocument
+        document: getOwnerDocument(container)
     });
 
     if (performAfterUpdates) {
@@ -372,7 +373,7 @@ Renderer.updateState = function(method, component, state, replace, callback) {
 
     vnode.enqueueState(method, state, replace);
     var renderOptions = assign({}, Renderer.renderOptions, {
-        document: vnode.node.ownerDocument
+        document: getOwnerDocument(vnode.node)
     });
 
     try {
