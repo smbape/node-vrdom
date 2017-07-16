@@ -221,8 +221,12 @@ ComponentWidget.prototype.componentDidUpdate = function(prevProps, prevState, pr
     var component = this.thunk.component,
         domNode = this.node;
 
-    if (component.componentDidUpdate) {
-        component.componentDidUpdate(prevProps, prevState, prevContext);
+    if (this.thunk.shouldUpdate) {
+        this.thunk.shouldUpdate = false;
+
+        if (component.componentDidUpdate) {
+            component.componentDidUpdate(prevProps, prevState, prevContext);
+        }
     }
 
     if (this.updateRef) {

@@ -129,7 +129,7 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
         willReceive = widget.willReceive,
         context = widget.context;
 
-    var nextCurrentContext, nextProps, prevProps, prevState, prevContext, pendingMethod, pendingReplace, pendingState, nextState, shouldUpdate;
+    var nextCurrentContext, nextProps, prevProps, prevState, prevContext, pendingMethod, pendingReplace, pendingState, nextState;
 
     nextContext = widget.getContext(type, nextContext);
     nextCurrentContext = widget.getPublicContext(type, nextContext);
@@ -165,10 +165,11 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
 
         nextState = widget.processPendingState(component, nextProps, false, nextCurrentContext);
 
+        this.shouldUpdate = true;
         if (component.shouldComponentUpdate && pendingMethod !== "forceUpdate" && (willReceive || pendingMethod)) {
-            shouldUpdate = component.shouldComponentUpdate(nextProps, nextState, nextCurrentContext);
+            this.shouldUpdate = component.shouldComponentUpdate(nextProps, nextState, nextCurrentContext);
 
-            if (shouldUpdate === false) {
+            if (this.shouldUpdate === false) {
                 // set new props/state/context even if no update
 
                 if (willReceive) {
@@ -189,14 +190,14 @@ ComponentThunk.prototype.updateComponent = function(nextElement, nextContext) {
             }
 
             /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
-            if (shouldUpdate !== true) {
-                msg = "Warning: " + translator.translate("errors.shouldComponentUpdate-not-boolean", getDisplayName(type), formatArgument(shouldUpdate));
+            if (this.shouldUpdate !== true) {
+                msg = "Warning: " + translator.translate("errors.shouldComponentUpdate-not-boolean", getDisplayName(type), formatArgument(this.shouldUpdate));
                 console.error(msg);
             }
             /// #endif
         }
 
-        if (component.componentWillUpdate) {
+        if (this.shouldUpdate !== false && component.componentWillUpdate) {
             component.componentWillUpdate(nextProps, nextState, nextCurrentContext);
         }
 

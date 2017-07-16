@@ -4025,10 +4025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    // Events bubbling up the document may have been marked as prevented
 	    // by a handler lower down the tree; reflect the correct value.
-	    this.isDefaultPrevented = src.defaultPrevented || src.defaultPrevented === undefined &&
-	
-	    // Support: Android <=2.3 only
-	    src.returnValue === false ? returnTrue : returnFalse;
+	    this.isDefaultPrevented = src.defaultPrevented || src.defaultPrevented === undefined ? returnTrue : returnFalse;
 	
 	    // Create target properties
 	    // Support: Safari <=6 - 7 only
@@ -4039,10 +4036,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.relatedTarget = src.relatedTarget;
 	
 	    // Create a timestamp if incoming event doesn't have one
-	    this.timeStamp = src.timeStamp || Date.now();
+	    if (src.timeStamp) {
+	        this.timeStamp = src.timeStamp;
+	    } else {
+	        this.timeStamp = Date.now();
+	    }
 	
+	    // eslint-disable-next-line guard-for-in
 	    for (var prop in props) {
-	        // eslint-disable-line guard-for-in
 	        this[prop] = props[prop];
 	    }
 	}
@@ -4083,12 +4084,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var button = event.button;
 	
 	        // Add which for key events
+	        /* istanbul ignore if */
 	        if (event.which == null && rkeyEvent.test(event.type)) {
 	            return event.charCode != null ? event.charCode : event.keyCode;
 	        }
 	
 	        // Add which for click: 1 === left; 2 === middle; 3 === right
-	        if (!event.which && button !== undefined && rmouseEvent.test(event.type)) {
+	        /* istanbul ignore if */
+	        if (!event.which && button !== undefined /* istanbul ignore next */ && rmouseEvent.test(event.type)) {
 	            if (button & 1) {
 	                return 1;
 	            }
@@ -4138,20 +4141,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function addProp(name, hook) {
-	    Object.defineProperty(this, name, { // eslint-disable-line no-invalid-this
+	    // eslint-disable-next-line no-invalid-this
+	    Object.defineProperty(this, name, {
 	        enumerable: true,
 	        configurable: true,
 	
 	        get: isFunction(hook) ? function () {
-	            // eslint-disable-line consistent-return
-	            if (this.originalEvent) {
-	                return hook(this.originalEvent);
-	            }
+	            return hook(this.originalEvent);
 	        } : function () {
-	            // eslint-disable-line consistent-return
-	            if (this.originalEvent) {
-	                return this.originalEvent[name];
-	            }
+	            return this.originalEvent[name];
 	        },
 	
 	        set: function set(value) {
@@ -4181,8 +4179,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var support;
 	
 	    // detect available wheel event
-	    support = isEventSupported("wheel") ? "wheel" : // Modern browsers support "wheel"
-	    isEventSupported("mousewheel") ? "mousewheel" : // Webkit and IE support at least "mousewheel"
+	    support = isEventSupported("wheel") ? "wheel" /* istanbul ignore next */ : // Modern browsers support "wheel"
+	    isEventSupported("mousewheel") ? "mousewheel" /* istanbul ignore next */ : // Webkit and IE support at least "mousewheel"
 	    "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 	
 	    return addWheelListener;
@@ -4192,11 +4190,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var _removeOldWheelListener;
 	        // handle MozMousePixelScroll in older Firefox
+	        /* istanbul ignore if */
 	        if (support === "DOMMouseScroll") {
 	            _removeOldWheelListener = _addWheelListener(elem, "MozMousePixelScroll", callback, useCapture);
 	        }
 	
 	        return function removeWheelListener() {
+	            /* istanbul ignore if */
 	            if (_removeOldWheelListener) {
 	                _removeOldWheelListener();
 	                _removeOldWheelListener = null;
@@ -7605,8 +7605,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var component = this.thunk.component,
 	        domNode = this.node;
 	
-	    if (component.componentDidUpdate) {
-	        component.componentDidUpdate(prevProps, prevState, prevContext);
+	    if (this.thunk.shouldUpdate) {
+	        this.thunk.shouldUpdate = false;
+	
+	        if (component.componentDidUpdate) {
+	            component.componentDidUpdate(prevProps, prevState, prevContext);
+	        }
 	    }
 	
 	    if (this.updateRef) {
@@ -7956,7 +7960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        willReceive = widget.willReceive,
 	        context = widget.context;
 	
-	    var nextCurrentContext, nextProps, prevProps, prevState, prevContext, pendingMethod, pendingReplace, pendingState, nextState, shouldUpdate;
+	    var nextCurrentContext, nextProps, prevProps, prevState, prevContext, pendingMethod, pendingReplace, pendingState, nextState;
 	
 	    nextContext = widget.getContext(type, nextContext);
 	    nextCurrentContext = widget.getPublicContext(type, nextContext);
@@ -7992,10 +7996,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        nextState = widget.processPendingState(component, nextProps, false, nextCurrentContext);
 	
+	        this.shouldUpdate = true;
 	        if (component.shouldComponentUpdate && pendingMethod !== "forceUpdate" && (willReceive || pendingMethod)) {
-	            shouldUpdate = component.shouldComponentUpdate(nextProps, nextState, nextCurrentContext);
+	            this.shouldUpdate = component.shouldComponentUpdate(nextProps, nextState, nextCurrentContext);
 	
-	            if (shouldUpdate === false) {
+	            if (this.shouldUpdate === false) {
 	                // set new props/state/context even if no update
 	
 	                if (willReceive) {
@@ -8016,14 +8021,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            ////////////////////////////////////////////////////////////////////
-	            ////////////////////////////
-	                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	            /////////////////////////////////
+	                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	                ///////////////////
 	             
 	            //////////
 	        }
 	
-	        if (component.componentWillUpdate) {
+	        if (this.shouldUpdate !== false && component.componentWillUpdate) {
 	            component.componentWillUpdate(nextProps, nextState, nextCurrentContext);
 	        }
 	

@@ -6,9 +6,9 @@ module.exports = (function() {
     var support;
 
     // detect available wheel event
-    support = isEventSupported("wheel") ? "wheel" : // Modern browsers support "wheel"
-        isEventSupported("mousewheel") ? "mousewheel" : // Webkit and IE support at least "mousewheel"
-            "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
+    support = isEventSupported("wheel") ? "wheel" /* istanbul ignore next */ : // Modern browsers support "wheel"
+        isEventSupported("mousewheel") ? "mousewheel" /* istanbul ignore next */ : // Webkit and IE support at least "mousewheel"
+        "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
 
     return addWheelListener;
 
@@ -17,11 +17,13 @@ module.exports = (function() {
 
         var _removeOldWheelListener;
         // handle MozMousePixelScroll in older Firefox
+        /* istanbul ignore if */
         if (support === "DOMMouseScroll") {
             _removeOldWheelListener = _addWheelListener(elem, "MozMousePixelScroll", callback, useCapture);
         }
 
         return function removeWheelListener() {
+            /* istanbul ignore if */
             if (_removeOldWheelListener) {
                 _removeOldWheelListener();
                 _removeOldWheelListener = null;

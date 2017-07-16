@@ -9,11 +9,7 @@ function ProxyEvent(src, eventName, props) {
 
     // Events bubbling up the document may have been marked as prevented
     // by a handler lower down the tree; reflect the correct value.
-    this.isDefaultPrevented = src.defaultPrevented ||
-    src.defaultPrevented === undefined &&
-
-    // Support: Android <=2.3 only
-    src.returnValue === false ?
+    this.isDefaultPrevented = src.defaultPrevented || src.defaultPrevented === undefined ?
         returnTrue :
         returnFalse;
 
@@ -28,9 +24,14 @@ function ProxyEvent(src, eventName, props) {
     this.relatedTarget = src.relatedTarget;
 
     // Create a timestamp if incoming event doesn't have one
-    this.timeStamp = src.timeStamp || Date.now();
+    if (src.timeStamp) {
+        this.timeStamp = src.timeStamp;
+    } else {
+        this.timeStamp = Date.now();
+    }
 
-    for (var prop in props) { // eslint-disable-line guard-for-in
+    // eslint-disable-next-line guard-for-in
+    for (var prop in props) {
         this[prop] = props[prop];
     }
 }
@@ -71,12 +72,14 @@ each({
         var button = event.button;
 
         // Add which for key events
+        /* istanbul ignore if */
         if (event.which == null && rkeyEvent.test(event.type)) {
             return event.charCode != null ? event.charCode : event.keyCode;
         }
 
         // Add which for click: 1 === left; 2 === middle; 3 === right
-        if (!event.which && button !== undefined && rmouseEvent.test(event.type)) {
+        /* istanbul ignore if */
+        if (!event.which && button !== undefined /* istanbul ignore next */ && rmouseEvent.test(event.type)) {
             if (button & 1) {
                 return 1;
             }
@@ -125,20 +128,17 @@ function each(obj, callback, context) {
 }
 
 function addProp(name, hook) {
-    Object.defineProperty(this, name, { // eslint-disable-line no-invalid-this
+    // eslint-disable-next-line no-invalid-this
+    Object.defineProperty(this, name, {
         enumerable: true,
         configurable: true,
 
         get: isFunction(hook) ?
-            function() { // eslint-disable-line consistent-return
-                if (this.originalEvent) {
-                    return hook(this.originalEvent);
-                }
+            function() {
+                return hook(this.originalEvent);
             } :
-            function() { // eslint-disable-line consistent-return
-                if (this.originalEvent) {
-                    return this.originalEvent[name];
-                }
+            function() {
+                return this.originalEvent[name];
             },
 
         set: function(value) {
