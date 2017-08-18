@@ -1,9 +1,6 @@
 module.exports = function getOwnerDocument(node) {
-    if (node == null)   {
-        return;
-    }
-
-    if (node.nodeType === 9) {
+    // eslint-disable-next-line no-magic-numbers
+    if (node == null || node.nodeType === 9) {
         return node;
     }
 

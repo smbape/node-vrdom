@@ -3223,6 +3223,100 @@
         "which": "1.2.14"
       },
       "dependencies": {
+        "acorn": {
+          "version": "5.1.1",
+          "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.1.1.tgz",
+          "integrity": "sha512-vOk6uEMctu0vQrvuSqFdJyqj1Q0S5VTDL79qtjo+DhRr+1mmaD+tluFSCZqhvi/JUhXSzoZN2BhtstaPEeE8cw=="
+        },
+        "babel-code-frame": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-code-frame/-/babel-code-frame-6.26.0.tgz",
+          "integrity": "sha1-Y/1D99weO7fONZR9uP42mj9Yx0s=",
+          "requires": {
+            "chalk": "1.1.3",
+            "esutils": "2.0.2",
+            "js-tokens": "3.0.2"
+          }
+        },
+        "babel-generator": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-generator/-/babel-generator-6.26.0.tgz",
+          "integrity": "sha1-rBriAHC3n248odMmlhMFN3TyDcU=",
+          "requires": {
+            "babel-messages": "6.23.0",
+            "babel-runtime": "6.26.0",
+            "babel-types": "6.26.0",
+            "detect-indent": "4.0.0",
+            "jsesc": "1.3.0",
+            "lodash": "4.17.4",
+            "source-map": "0.5.6",
+            "trim-right": "1.0.1"
+          }
+        },
+        "babel-register": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-register/-/babel-register-6.26.0.tgz",
+          "integrity": "sha1-btAhFz4vy0htestFxgCahW9kcHE=",
+          "requires": {
+            "babel-runtime": "6.26.0",
+            "core-js": "2.5.0",
+            "home-or-tmp": "2.0.0",
+            "lodash": "4.17.4",
+            "mkdirp": "0.5.1",
+            "source-map-support": "0.4.15"
+          }
+        },
+        "babel-runtime": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-runtime/-/babel-runtime-6.26.0.tgz",
+          "integrity": "sha1-llxwWGaOgrVde/4E/yM3vItWR/4=",
+          "requires": {
+            "core-js": "2.5.0",
+            "regenerator-runtime": "0.11.0"
+          }
+        },
+        "babel-template": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-template/-/babel-template-6.26.0.tgz",
+          "integrity": "sha1-3gPi0WOWsGn0bdn/+FIfsaDjXgI=",
+          "requires": {
+            "babel-runtime": "6.26.0",
+            "babel-traverse": "6.26.0",
+            "babel-types": "6.26.0",
+            "lodash": "4.17.4"
+          }
+        },
+        "babel-traverse": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-traverse/-/babel-traverse-6.26.0.tgz",
+          "integrity": "sha1-RqnL1+3MYsjlwGTi0tjQ9ANXZu4=",
+          "requires": {
+            "babel-code-frame": "6.26.0",
+            "babel-messages": "6.23.0",
+            "babel-runtime": "6.26.0",
+            "babel-types": "6.26.0",
+            "debug": "2.6.8",
+            "globals": "9.18.0",
+            "invariant": "2.2.2",
+            "lodash": "4.17.4"
+          }
+        },
+        "babel-types": {
+          "version": "6.26.0",
+          "resolved": "https://registry.npmjs.org/babel-types/-/babel-types-6.26.0.tgz",
+          "integrity": "sha1-o7Bz+Uq0nrb6Vc1lInozQ4BjJJc=",
+          "requires": {
+            "babel-runtime": "6.26.0",
+            "esutils": "2.0.2",
+            "lodash": "4.17.4",
+            "to-fast-properties": "1.0.3"
+          }
+        },
+        "core-js": {
+          "version": "2.5.0",
+          "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.5.0.tgz",
+          "integrity": "sha1-VpwFCRi+ZIazg3VSAorgRmtxcIY="
+        },
         "estraverse": {
           "version": "1.9.3",
           "resolved": "https://registry.npmjs.org/estraverse/-/estraverse-1.9.3.tgz",
@@ -3232,6 +3326,27 @@
           "version": "0.0.1",
           "resolved": "https://registry.npmjs.org/isarray/-/isarray-0.0.1.tgz",
           "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
+        },
+        "js-tokens": {
+          "version": "3.0.2",
+          "resolved": "https://registry.npmjs.org/js-tokens/-/js-tokens-3.0.2.tgz",
+          "integrity": "sha1-mGbfOVECEw449/mWvOtlRDIJwls="
+        },
+        "js-yaml": {
+          "version": "3.9.1",
+          "resolved": "https://registry.npmjs.org/js-yaml/-/js-yaml-3.9.1.tgz",
+          "integrity": "sha512-CbcG379L1e+mWBnLvHWWeLs8GyV/EMw862uLI3c+GxVyDHWZcjZinwuBd3iW2pgxgIlksW/1vNJa4to+RvDOww==",
+          "requires": {
+            "argparse": "1.0.9",
+            "esprima": "4.0.0"
+          },
+          "dependencies": {
+            "esprima": {
+              "version": "4.0.0",
+              "resolved": "https://registry.npmjs.org/esprima/-/esprima-4.0.0.tgz",
+              "integrity": "sha512-oftTcaMu/EGrEIu904mWteKIv8vMuOgGYo7EhVJJN00R/EED9DCua/xxHRdYnKtcECzVg7xOWhflvJMnqcFZjw=="
+            }
+          }
         },
         "jsesc": {
           "version": "1.3.0",
@@ -3262,6 +3377,11 @@
             "isarray": "0.0.1",
             "string_decoder": "0.10.31"
           }
+        },
+        "regenerator-runtime": {
+          "version": "0.11.0",
+          "resolved": "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.11.0.tgz",
+          "integrity": "sha512-/aA0kLeRb5N9K0d4fw7ooEbI+xDe+DKD499EQqygGqeS8N3xto15p09uY2xj7ixP81sNPXvRLnAQIqdVStgb1A=="
         },
         "semver": {
           "version": "4.3.6",

@@ -223,16 +223,6 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
         return true;
     }
 
-    if (isCustomTag || CUSTOM_TAG_ATTR_REG.test(propName)) {
-        prevValue = prevValue == null ? undefined : String(prevValue);
-        nextValue = nextValue == null ? undefined : String(nextValue);
-
-        if (prevValue !== nextValue) {
-            hasChanged = true;
-            setAttribute(node, propName, nextValue);
-        }
-    }
-
     if (hasProp.call(w3c.properties, propName)) {
         var propConfig = w3c.properties[propName];
 
@@ -285,8 +275,26 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
                 setAttribute(node, attrName, nextValue, namespace);
             }
         }
+    } else if (isCustomTag || CUSTOM_TAG_ATTR_REG.test(propName)) {
+        var _prevValue = getPropvalue(prevValue);
+        var _nextValue = getPropvalue(nextValue);
+
+        if (_prevValue !== _nextValue) {
+            hasChanged = true;
+            if (typeof nextValue === "boolean") {
+                if (nextValue) {
+                    _nextValue = "";
+                } else {
+                    _nextValue = undefined;
+                }
+            }
+            setAttribute(node, propName, _nextValue);
+        }
     } else {
         hasChanged = true;
+        if (typeof nextValue === "string") {
+            setAttribute(node, propName, nextValue);
+        }
         node[propName] = nextValue;
     }
 

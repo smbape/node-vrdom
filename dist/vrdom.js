@@ -1122,11 +1122,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports) {
 
 	module.exports = function getOwnerDocument(node) {
-	    if (node == null) {
-	        return;
-	    }
-	
-	    if (node.nodeType === 9) {
+	    // eslint-disable-next-line no-magic-numbers
+	    if (node == null || node.nodeType === 9) {
 	        return node;
 	    }
 	
@@ -3072,16 +3069,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    }
 	
-	    if (isCustomTag || CUSTOM_TAG_ATTR_REG.test(propName)) {
-	        prevValue = prevValue == null ? undefined : String(prevValue);
-	        nextValue = nextValue == null ? undefined : String(nextValue);
-	
-	        if (prevValue !== nextValue) {
-	            hasChanged = true;
-	            setAttribute(node, propName, nextValue);
-	        }
-	    }
-	
 	    if (hasProp.call(w3c.properties, propName)) {
 	        var propConfig = w3c.properties[propName];
 	
@@ -3134,8 +3121,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	                setAttribute(node, attrName, nextValue, namespace);
 	            }
 	        }
+	    } else if (isCustomTag || CUSTOM_TAG_ATTR_REG.test(propName)) {
+	        var _prevValue = getPropvalue(prevValue);
+	        var _nextValue = getPropvalue(nextValue);
+	
+	        if (_prevValue !== _nextValue) {
+	            hasChanged = true;
+	            if (typeof nextValue === "boolean") {
+	                if (nextValue) {
+	                    _nextValue = "";
+	                } else {
+	                    _nextValue = undefined;
+	                }
+	            }
+	            setAttribute(node, propName, _nextValue);
+	        }
 	    } else {
 	        hasChanged = true;
+	        if (typeof nextValue === "string") {
+	            setAttribute(node, propName, nextValue);
+	        }
 	        node[propName] = nextValue;
 	    }
 	
@@ -3727,6 +3732,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	var globalWindow = __webpack_require__(45);
+	var globalDocument = __webpack_require__(30);
 	var getOwnerDocument = __webpack_require__(23);
 	var hasProp = __webpack_require__(5);
 	var expando = __webpack_require__(2);
@@ -3752,14 +3759,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	EventListener.addEventListener = function (context, node, eventName, eventType) {
 	    var ownerDocument = getOwnerDocument(node);
+	    var unref = true;
 	
 	    var delegator;
 	    // on Edge and when ownerDocument is iframe.contentDocument
 	    // delete is not authorized
 	    if (ownerDocument[expando + "_delegator"] != null) {
 	        delegator = ownerDocument[expando + "_delegator"];
-	        ownerDocument = null; //unref
 	    } else {
+	        unref = false;
 	        delegator = ownerDocument[expando + "_delegator"] = new EventDispatcher(ownerDocument);
 	        destroyers.running.push(function () {
 	            // ownerDocument may an iframe document
@@ -3787,7 +3795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (eventName === "load" && node.nodeName === "BODY") {
-	        target = node.ownerDocument.defaultView;
+	        target = ownerDocument.defaultView;
 	    }
 	
 	    var handler, removeEventListener;
@@ -3796,12 +3804,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // listen to local events on node and simulate bubble
 	        handler = delegator.getHandler(eventName, eventType);
 	        context.removeEventListener = addEventListener(node, eventType, handler, useCapture);
+	        if (unref) {
+	            ownerDocument = null; //unref
+	        }
 	        return;
 	    }
 	
 	    if (target !== node) {
+	        handler = context.handler;
+	
 	        // listen to event on target
-	        context.removeEventListener = addEventListener(target, eventType, context.handler, useCapture);
+	        if (target === globalWindow && ownerDocument !== globalDocument) {
+	            if (ownerDocument) {
+	                target = ownerDocument.defaultView;
+	                context.removeEventListener = addEventListener(target, eventType, handler, useCapture);
+	            } else if (node.nodeName === "IFRAME") {
+	                context.removeEventListener = function () {
+	                    if (removeEventListener) {
+	                        removeEventListener();
+	                        removeEventListener = null;
+	                    }
+	                };
+	
+	                node.addEventListener("load", function onload() {
+	                    node.removeEventListener("load", onload, false);
+	                    var ownerDocument = getOwnerDocument(node);
+	                    var target = ownerDocument.defaultView;
+	                    removeEventListener = addEventListener(target, eventType, handler, useCapture);
+	                    node = null;
+	                }, false);
+	            }
+	        } else {
+	            context.removeEventListener = addEventListener(target, eventType, handler, useCapture);
+	        }
+	        if (unref) {
+	            ownerDocument = null; //unref
+	        }
 	        return;
 	    }
 	
@@ -3815,6 +3853,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var events = EvStore(node);
 	    events[EventDispatcher.getKey(eventName, eventType)] = context.handler;
+	    if (unref) {
+	        ownerDocument = null; //unref
+	    }
 	};
 	
 	EventListener.removeEventListener = function (context, node, eventName, eventType) {

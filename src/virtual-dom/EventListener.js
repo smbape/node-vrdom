@@ -1,3 +1,5 @@
+var globalWindow = require("global/window");
+var globalDocument = require("global/document");
 var getOwnerDocument = require("../functions/getOwnerDocument");
 var hasProp = require("../functions/hasProp");
 var expando = require("../expando");
@@ -23,14 +25,15 @@ var EventListener = exports;
 
 EventListener.addEventListener = function(context, node, eventName, eventType) {
     var ownerDocument = getOwnerDocument(node);
+    var unref = true;
 
     var delegator;
     // on Edge and when ownerDocument is iframe.contentDocument
     // delete is not authorized
     if (ownerDocument[expando + "_delegator"] != null) {
         delegator = ownerDocument[expando + "_delegator"];
-        ownerDocument = null; //unref
     } else {
+        unref = false;
         delegator = ownerDocument[expando + "_delegator"] = new EventDispatcher(ownerDocument);
         destroyers.running.push(function() {
             // ownerDocument may an iframe document
@@ -58,7 +61,7 @@ EventListener.addEventListener = function(context, node, eventName, eventType) {
     }
 
     if (eventName === "load" && node.nodeName === "BODY") {
-        target = node.ownerDocument.defaultView;
+        target = ownerDocument.defaultView;
     }
 
     var handler, removeEventListener;
@@ -67,12 +70,42 @@ EventListener.addEventListener = function(context, node, eventName, eventType) {
         // listen to local events on node and simulate bubble
         handler = delegator.getHandler(eventName, eventType);
         context.removeEventListener = addEventListener(node, eventType, handler, useCapture);
+        if (unref) {
+            ownerDocument = null; //unref
+        }
         return;
     }
 
     if (target !== node) {
+        handler = context.handler;
+
         // listen to event on target
-        context.removeEventListener = addEventListener(target, eventType, context.handler, useCapture);
+        if (target === globalWindow && ownerDocument !== globalDocument) {
+            if (ownerDocument) {
+                target = ownerDocument.defaultView;
+                context.removeEventListener = addEventListener(target, eventType, handler, useCapture);
+            } else if (node.nodeName === "IFRAME") {
+                context.removeEventListener = function() {
+                    if (removeEventListener) {
+                        removeEventListener();
+                        removeEventListener = null;
+                    }
+                };
+
+                node.addEventListener("load", function onload() {
+                    node.removeEventListener("load", onload, false);
+                    var ownerDocument = getOwnerDocument(node);
+                    var target = ownerDocument.defaultView;
+                    removeEventListener = addEventListener(target, eventType, handler, useCapture);
+                    node = null;
+                }, false);
+            }
+        } else {
+            context.removeEventListener = addEventListener(target, eventType, handler, useCapture);
+        }
+        if (unref) {
+            ownerDocument = null; //unref
+        }
         return;
     }
 
@@ -86,6 +119,9 @@ EventListener.addEventListener = function(context, node, eventName, eventType) {
 
     var events = EvStore(node);
     events[EventDispatcher.getKey(eventName, eventType)] = context.handler;
+    if (unref) {
+        ownerDocument = null; //unref
+    }
 };
 
 EventListener.removeEventListener = function(context, node, eventName, eventType) {
