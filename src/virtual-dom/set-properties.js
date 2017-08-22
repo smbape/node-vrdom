@@ -252,12 +252,12 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
                 hasChanged = true;
                 if (isBoolean) {
                     if (nextValue) {
-                        node.setAttribute(propName, "");
+                        setAttribute(node, attrName, "", namespace);
                     } else {
-                        node.removeAttribute(propName);
+                        setAttribute(node, attrName, undefined, namespace);
                     }
                 } else {
-                    node.setAttribute(propName, String(nextValue));
+                    setAttribute(node, attrName, String(nextValue), namespace);
                 }
                 node[propName] = nextValue;
             }
@@ -294,6 +294,10 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
         hasChanged = true;
         if (typeof nextValue === "string") {
             setAttribute(node, propName, nextValue);
+        } else if (nextValue === true) {
+            setAttribute(node, propName, "");
+        } else if (nextValue === false) {
+            setAttribute(node, propName, undefined);
         }
         node[propName] = nextValue;
     }

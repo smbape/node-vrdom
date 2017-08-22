@@ -37,11 +37,7 @@ module.exports = function(config) {
         ],
 
         browsers: [
-            "Chrome",
-            // "Firefox",
-            // "Edge",
-            // "IE",
-            // "Opera"
+            "Chrome"
         ],
 
         customLaunchers: {

@@ -3098,12 +3098,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hasChanged = true;
 	                if (isBoolean) {
 	                    if (nextValue) {
-	                        node.setAttribute(propName, "");
+	                        setAttribute(node, attrName, "", namespace);
 	                    } else {
-	                        node.removeAttribute(propName);
+	                        setAttribute(node, attrName, undefined, namespace);
 	                    }
 	                } else {
-	                    node.setAttribute(propName, String(nextValue));
+	                    setAttribute(node, attrName, String(nextValue), namespace);
 	                }
 	                node[propName] = nextValue;
 	            }
@@ -3140,6 +3140,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        hasChanged = true;
 	        if (typeof nextValue === "string") {
 	            setAttribute(node, propName, nextValue);
+	        } else if (nextValue === true) {
+	            setAttribute(node, propName, "");
+	        } else if (nextValue === false) {
+	            setAttribute(node, propName, undefined);
 	        }
 	        node[propName] = nextValue;
 	    }
@@ -3914,8 +3918,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	EventDispatcher.prototype.addEventListener = function (eventName, eventType, useCapture) {
 	    var handlers = this.handlers;
+	    var key = EventDispatcher.getKey(eventName, eventType);
 	
-	    if (hasProp.call(handlers, eventName)) {
+	    if (hasProp.call(handlers, key)) {
 	        return null;
 	    }
 	
@@ -3930,7 +3935,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return function removeEventListener() {
 	        target.removeEventListener(eventType, listener, useCapture);
-	        delete handlers[EventDispatcher.getKey(eventName, eventType)];
+	        delete handlers[key];
+	        key = null;
 	        handlers = null;
 	        target = null;
 	        listener = null;
@@ -3945,24 +3951,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return handlers[key];
 	    }
 	
-	    var handler = handlers[key] = eventHandler.bind(this, eventName, eventType);
+	    var handler = handlers[key] = eventHandler.bind(this, key, eventName, eventType);
 	    return handler;
 	};
 	
-	function eventHandler(eventName, eventType, evt) {
+	function eventHandler(key, eventName, eventType, evt) {
 	    var ret;
 	
-	    var process = false;
+	    var _process = false;
 	    if (Renderer._eventHandler == null) {
 	        Renderer._eventHandler = [];
 	        Renderer._performAfterUpdates = false;
-	        process = true;
+	        _process = true;
 	    }
 	
 	    try {
 	        ret = dispatchEvent(eventName, eventType, evt, evt.target);
 	    } finally {
-	        if (process) {
+	        if (_process) {
 	            Renderer.processEventHandler();
 	            Renderer._performAfterUpdates = true;
 	        }

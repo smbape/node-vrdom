@@ -18,8 +18,9 @@ EventDispatcher.getKey = function(eventName, eventType) {
 
 EventDispatcher.prototype.addEventListener = function(eventName, eventType, useCapture) {
     var handlers = this.handlers;
+    var key = EventDispatcher.getKey(eventName, eventType);
 
-    if (hasProp.call(handlers, eventName)) {
+    if (hasProp.call(handlers, key)) {
         return null;
     }
 
@@ -34,7 +35,8 @@ EventDispatcher.prototype.addEventListener = function(eventName, eventType, useC
 
     return function removeEventListener() {
         target.removeEventListener(eventType, listener, useCapture);
-        delete handlers[EventDispatcher.getKey(eventName, eventType)];
+        delete handlers[key];
+        key = null;
         handlers = null;
         target = null;
         listener = null;
@@ -49,24 +51,24 @@ EventDispatcher.prototype.getHandler = function(eventName, eventType) {
         return handlers[key];
     }
 
-    var handler = handlers[key] = eventHandler.bind(this, eventName, eventType);
+    var handler = handlers[key] = eventHandler.bind(this, key, eventName, eventType);
     return handler;
 };
 
-function eventHandler(eventName, eventType, evt) {
+function eventHandler(key, eventName, eventType, evt) {
     var ret;
 
-    var process = false;
+    var _process = false;
     if (Renderer._eventHandler == null) {
         Renderer._eventHandler = [];
         Renderer._performAfterUpdates = false;
-        process = true;
+        _process = true;
     }
 
     try {
         ret = dispatchEvent(eventName, eventType, evt, evt.target);
     } finally {
-        if (process) {
+        if (_process) {
             Renderer.processEventHandler();
             Renderer._performAfterUpdates = true;
         }
