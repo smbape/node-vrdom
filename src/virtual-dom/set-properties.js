@@ -250,14 +250,16 @@ function setProperty(type, node, propName, nextProps, prevProps, isCustomTag) {
 
             if (prevValue !== nextValue) {
                 hasChanged = true;
-                if (isBoolean) {
-                    if (nextValue) {
-                        setAttribute(node, attrName, "", namespace);
+                if (attrName !== undefined) {
+                    if (isBoolean) {
+                        if (nextValue) {
+                            setAttribute(node, attrName, "", namespace);
+                        } else {
+                            setAttribute(node, attrName, undefined, namespace);
+                        }
                     } else {
-                        setAttribute(node, attrName, undefined, namespace);
+                        setAttribute(node, attrName, String(nextValue), namespace);
                     }
-                } else {
-                    setAttribute(node, attrName, String(nextValue), namespace);
                 }
                 node[propName] = nextValue;
             }

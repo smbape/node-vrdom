@@ -77,7 +77,7 @@ function updateVNode(a, b, renderOptions, context) {
 
     if (a.ref !== b.ref) {
         hasChanged = true;
-        a.setRef(null);
+        a.setRef(null, "update");
     }
 
     var aProps = a.props;

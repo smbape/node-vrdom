@@ -326,6 +326,7 @@ function toVNodeArgs(type, config) {
 }
 
 assign(exports, {
+    vrdom: exports,
     nodeMap: nodeMap,
     isValidElement: functions.isValidElement,
     render: Renderer.render,

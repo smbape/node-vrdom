@@ -53,7 +53,7 @@ EventListener.addEventListener = function(context, node, eventName, eventType) {
         eventType = config.eventType;
         useCapture = config.useCapture;
         target = config.target || node;
-        isLocal = hasProp.call(config, "local");
+        isLocal = hasProp.call(config, "local") && hasProp.call(config.local, node.nodeName.toLowerCase());
     } else {
         eventType = eventType.toLowerCase();
         useCapture = false;

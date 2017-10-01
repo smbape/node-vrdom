@@ -2,7 +2,7 @@
 var translator = require("../messages/translator");
 /// #endif
 
-module.exports = function attachRef(owner, ref, instance) {
+module.exports = function attachRef(owner, ref, instance, status) {
     if (ref == null) {
         return;
     }
@@ -12,7 +12,7 @@ module.exports = function attachRef(owner, ref, instance) {
     }
 
     if ("function" === typeof ref) {
-        ref.call(owner, instance);
+        ref.call(owner, instance, status);
         return;
     }
 

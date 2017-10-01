@@ -383,6 +383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	assign(exports, {
+	    vrdom: exports,
 	    nodeMap: nodeMap,
 	    isValidElement: functions.isValidElement,
 	    render: Renderer.render,
@@ -537,7 +538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	///////////////////////////////////////////////////
 	//////////
 	
-	module.exports = function attachRef(owner, ref, instance) {
+	module.exports = function attachRef(owner, ref, instance, status) {
 	    if (ref == null) {
 	        return;
 	    }
@@ -547,7 +548,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if ("function" === typeof ref) {
-	        ref.call(owner, instance);
+	        ref.call(owner, instance, status);
 	        return;
 	    }
 	
@@ -3096,14 +3097,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            if (prevValue !== nextValue) {
 	                hasChanged = true;
-	                if (isBoolean) {
-	                    if (nextValue) {
-	                        setAttribute(node, attrName, "", namespace);
+	                if (attrName !== undefined) {
+	                    if (isBoolean) {
+	                        if (nextValue) {
+	                            setAttribute(node, attrName, "", namespace);
+	                        } else {
+	                            setAttribute(node, attrName, undefined, namespace);
+	                        }
 	                    } else {
-	                        setAttribute(node, attrName, undefined, namespace);
+	                        setAttribute(node, attrName, String(nextValue), namespace);
 	                    }
-	                } else {
-	                    setAttribute(node, attrName, String(nextValue), namespace);
 	                }
 	                node[propName] = nextValue;
 	            }
@@ -3791,7 +3794,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        eventType = config.eventType;
 	        useCapture = config.useCapture;
 	        target = config.target || node;
-	        isLocal = hasProp.call(config, "local");
+	        isLocal = hasProp.call(config, "local") && hasProp.call(config.local, node.nodeName.toLowerCase());
 	    } else {
 	        eventType = eventType.toLowerCase();
 	        useCapture = false;
@@ -6950,7 +6953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (a.ref !== b.ref) {
 	        hasChanged = true;
-	        a.setRef(null);
+	        a.setRef(null, "update");
 	    }
 	
 	    var aProps = a.props;
@@ -7374,17 +7377,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	VirtualNode.prototype.componentDidMount = function () {
-	    this.setRef(this.node);
+	    this.setRef(this.node, "mount");
 	};
 	
 	VirtualNode.prototype.componentDidUpdate = function () /* previous */{
-	    this.setRef(this.node);
+	    this.setRef(this.node, "update");
 	};
 	
-	VirtualNode.prototype.setRef = function (domNode) {
+	VirtualNode.prototype.setRef = function (domNode, status) {
 	    if (domNode == null || this.updateRef) {
 	        this.updateRef = false;
-	        attachRef(this.owner, this.ref, domNode);
+	        attachRef(this.owner, this.ref, domNode, status);
 	    }
 	};
 	
@@ -7397,7 +7400,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var vnode = this;
 	
-	    vnode.setRef(null);
+	    vnode.setRef(null, "unmount");
 	
 	    for (var key in vnode) {
 	        if (key !== "id" && key !== "key" && hasProp.call(vnode, key)) {
@@ -7525,7 +7528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    try {
 	        if (nextElement.ref !== prevWidget.ref) {
-	            prevWidget.setRef(null);
+	            prevWidget.setRef(null, "update");
 	            prevWidget.ref = nextElement.ref;
 	            prevWidget.updateRef = true;
 	        }
@@ -7645,7 +7648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        component.componentDidMount();
 	    }
 	
-	    this.setRef(domNode);
+	    this.setRef(domNode, "mount");
 	};
 	
 	ComponentWidget.prototype.componentDidUpdate = function (prevProps, prevState, prevContext) {
@@ -7662,11 +7665,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (this.updateRef) {
 	        this.updateRef = false;
-	        this.setRef(domNode);
+	        this.setRef(domNode, "update");
 	    }
 	};
 	
-	ComponentWidget.prototype.setRef = function (domNode) {
+	ComponentWidget.prototype.setRef = function (domNode, status) {
 	    ////////////////////////////////////////////////////////////////////
 	    ////////
 	    /////////////////////
@@ -7696,7 +7699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        component = null;
 	    }
 	
-	    attachRef(owner, ref, component);
+	    attachRef(owner, ref, component, status);
 	};
 	
 	ComponentWidget.prototype.enqueueState = function (method, state, replace, callback) {
@@ -7835,7 +7838,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return domNode;
 	        }
 	
-	        this.setRef(null);
+	        this.setRef(null, "unmount");
 	
 	        thunk.willUnmount();
 	    }

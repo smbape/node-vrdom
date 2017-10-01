@@ -47,17 +47,17 @@ VirtualNode.prototype.update = function(element) {
 };
 
 VirtualNode.prototype.componentDidMount = function() {
-    this.setRef(this.node);
+    this.setRef(this.node, "mount");
 };
 
 VirtualNode.prototype.componentDidUpdate = function(/* previous */) {
-    this.setRef(this.node);
+    this.setRef(this.node, "update");
 };
 
-VirtualNode.prototype.setRef = function(domNode) {
+VirtualNode.prototype.setRef = function(domNode, status) {
     if (domNode == null || this.updateRef) {
         this.updateRef = false;
-        attachRef(this.owner, this.ref, domNode);
+        attachRef(this.owner, this.ref, domNode, status);
     }
 };
 
@@ -70,7 +70,7 @@ VirtualNode.prototype.destroy = function(domNode /* , placeholder */ ) {
 
     var vnode = this;
 
-    vnode.setRef(null);
+    vnode.setRef(null, "unmount");
 
     for (var key in vnode) {
         if (key !== "id" && key !== "key" && hasProp.call(vnode, key)) {

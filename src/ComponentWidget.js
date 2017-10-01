@@ -94,7 +94,7 @@ ComponentWidget.prototype.update = function(nextElement, domNode, nextContext, r
 
     try {
         if (nextElement.ref !== prevWidget.ref) {
-            prevWidget.setRef(null);
+            prevWidget.setRef(null, "update");
             prevWidget.ref = nextElement.ref;
             prevWidget.updateRef = true;
         }
@@ -214,7 +214,7 @@ ComponentWidget.prototype.componentDidMount = function() {
         component.componentDidMount();
     }
 
-    this.setRef(domNode);
+    this.setRef(domNode, "mount");
 };
 
 ComponentWidget.prototype.componentDidUpdate = function(prevProps, prevState, prevContext) {
@@ -231,11 +231,11 @@ ComponentWidget.prototype.componentDidUpdate = function(prevProps, prevState, pr
 
     if (this.updateRef) {
         this.updateRef = false;
-        this.setRef(domNode);
+        this.setRef(domNode, "update");
     }
 };
 
-ComponentWidget.prototype.setRef = function(domNode) {
+ComponentWidget.prototype.setRef = function(domNode, status) {
     /// #if typeof NODE_ENV === "undefined" || NODE_ENV !== "production"
     var msg;
     var type = this.type;
@@ -265,7 +265,7 @@ ComponentWidget.prototype.setRef = function(domNode) {
         component = null;
     }
 
-    attachRef(owner, ref, component);
+    attachRef(owner, ref, component, status);
 };
 
 ComponentWidget.prototype.enqueueState = function(method, state, replace, callback) {
@@ -404,7 +404,7 @@ ComponentWidget.prototype.destroy = function(domNode, placeholder, renderOptions
             return domNode;
         }
 
-        this.setRef(null);
+        this.setRef(null, "unmount");
 
         thunk.willUnmount();
     }
