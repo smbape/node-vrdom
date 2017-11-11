@@ -81,124 +81,231 @@ return /******/ (function(modules) { // webpackBootstrap
 	    hasProp = functions.hasProp,
 	    hooks = vrdom.hooks;
 	
+	var defineGetSetProperty = function defineGetSetProperty(obj, prop, getter, setter) {
+	    Object.defineProperty(obj, prop, {
+	        configurable: true,
+	        enumerable: true,
+	        get: getter,
+	        set: typeof setter === "function" ? setter : function (value) {
+	            Object.define(this, prop, {
+	                configurable: true,
+	                enumerable: true,
+	                writable: true,
+	                value: value
+	            });
+	            return value;
+	        }
+	    });
+	};
+	
+	var INTERFACE_PROPERTIES = [];
+	
+	var addInterface = function addInterface(_INTERFACE_PROPERTIES) {
+	    Object.keys(_INTERFACE_PROPERTIES).forEach(function (prop) {
+	        if (INTERFACE_PROPERTIES.indexOf(prop) === -1) {
+	            INTERFACE_PROPERTIES.push(prop);
+	        }
+	    });
+	
+	    return _INTERFACE_PROPERTIES;
+	};
+	
 	/**
 	 * Transform a virtual node to a ReactDOMComponent compatible object
-	 * 
-	 * @param  {VirtualNode|VirtualText|ComponentWidget} vnode Virtual node to transform
-	 * @param  {ReactInternalInstance}                   inst  Transformed object
-	 * 
-	 * @return {ReactInternalInstance}                   Transformed object
+	 * @type {Object}
 	 */
-	function toReactDOMComponent(vnode, inst) {
-	    var _tag = vnode.type;
-	    var _currentElement = vnode.element;
-	    var children = vnode.children;
-	    var _hostNode = vnode.node;
-	    var _renderedChildren = void 0;
+	var ReactDOMComponentInterface = addInterface({
+	    getName: {
+	        getter: function getter() {
+	            return this.vnode.type;
+	        }
+	    },
 	
-	    if (children !== null && "object" === typeof children) {
-	        _renderedChildren = [];
-	        for (var canonicalKey in children) {
-	            // eslint-disable-line guard-for-in
-	            _renderedChildren.push(toReactComponent(children[canonicalKey]));
+	    _currentElement: {
+	        getter: function getter() {
+	            return this.vnode.element;
+	        }
+	    },
+	
+	    _renderedChildren: {
+	        getter: function getter() {
+	            var children = this.vnode.children;
+	            var _renderedChildren = void 0;
+	
+	            if (children !== null && "object" === typeof children) {
+	                _renderedChildren = [];
+	
+	                // eslint-disable-next-line guard-for-in
+	                for (var canonicalKey in children) {
+	                    _renderedChildren.push(toReactComponent(children[canonicalKey]));
+	                }
+	            }
+	
+	            return _renderedChildren;
 	        }
 	    }
-	
-	    Object.assign(inst, {
-	        // --- ReactDOMComponent interface
-	        getName: function getName() {
-	            return _tag;
-	        },
-	
-	        _currentElement: _currentElement,
-	        _hostNode: _hostNode,
-	        _renderedChildren: _renderedChildren,
-	
-	        _inDevTools: false,
-	        vnode: vnode
-	    });
-	
-	    return inst;
-	}
-	
-	/**
-	 * Transform a virtual node to a ReactTextComponent compatible object
-	 * 
-	 * @param  {VirtualNode|VirtualText|ComponentWidget} vnode Virtual node to transform
-	 * @param  {ReactInternalInstance}                   inst  Transformed object
-	 * 
-	 * @return {ReactInternalInstance}                   Transformed object
-	 */
-	function toReactTextComponent(vnode, inst) {
-	    Object.assign(inst, {
-	        _currentElement: vnode.text,
-	        _stringText: vnode.text,
-	        _hostNode: vnode.node,
-	
-	        _inDevTools: false,
-	        vnode: vnode
-	    });
-	
-	    return inst;
-	}
+	});
 	
 	/**
 	 * Transform a virtual node to a ReactCompositeComponent compatible object
-	 * 
-	 * @param  {VirtualNode|VirtualText|ComponentWidget} vnode Virtual node to transform
-	 * @param  {ReactInternalInstance}                   inst  Transformed object
-	 * 
-	 * @return {ReactInternalInstance}                   Transformed object
+	 * @type {Object}
 	 */
-	function toReactCompositeComponent(vnode, inst) {
-	    // forceUpdate set _currentElement
-	    if (!hasProp.call(inst, "_currentElement")) {
-	        Object.defineProperty(inst, "_currentElement", {
-	            enumerable: true, // available in for ... in
-	            configurable: true, // can be deleted and reconfigured
+	var ReactCompositeComponentInterface = addInterface({
+	    getName: {
+	        getter: function getter() {
+	            return getDisplayName(this.vnode.element.type);
+	        }
+	    },
 	
-	            get: function get() {
-	                return this.vnode && this.vnode.element;
-	            },
-	
-	            set: function set(element) {
-	                this.vnode.element = element;
-	            }
-	        });
-	    }
-	
-	    var isStateless = vnode.thunk._type === "Stateless";
-	    var _instance = vnode.thunk.component;
-	    var _currentElement = vnode.element;
-	    var _context = void 0;
-	
-	    if (isStateless) {
-	        _context = vnode.context;
-	        _instance = {
-	            context: _context,
-	            props: _currentElement.props,
-	            refs: {},
-	            state: null
-	        };
-	    }
-	
-	    var name = getDisplayName(_currentElement.type);
-	
-	    Object.assign(inst, {
-	        getName: function getName() {
-	            return name;
+	    _currentElement: {
+	        getter: function getter() {
+	            return this.vnode.element;
 	        },
 	
-	        _hostNode: vnode.node,
-	        _context: _context,
-	        _instance: _instance,
-	        _renderedComponent: toReactComponent(vnode.thunk.vnode),
 	
-	        vnode: vnode
+	        // forceUpdate set _currentElement
+	        setter: function setter(element) {
+	            this.vnode.element = element;
+	            return element;
+	        }
+	    },
+	
+	    _renderedComponent: {
+	        getter: function getter() {
+	            return toReactComponent(this.vnode.thunk.vnode);
+	        }
+	    },
+	
+	    _context: {
+	        getter: function getter() {
+	            if (this.stateless) {
+	                return this.vnode.context;
+	            }
+	
+	            return undefined;
+	        }
+	    },
+	
+	    _instance: {
+	        getter: function getter() {
+	            if (this.stateless) {
+	                return {
+	                    context: this._context,
+	                    props: this.vnode.element.props,
+	                    refs: {},
+	                    state: null
+	                };
+	            }
+	
+	            return this.vnode.thunk.component;
+	        }
+	    },
+	
+	    stateless: {
+	        getter: function getter() {
+	            return this.vnode.thunk._type === "Stateless";
+	        }
+	    }
+	});
+	
+	/**
+	 * Transform a virtual node to a ReactTextComponent compatible object
+	 * @type {Object}
+	 */
+	var ReactTextComponentInterface = addInterface({
+	    _currentElement: {
+	        getter: function getter() {
+	            return this.vnode.text;
+	        }
+	    },
+	
+	    _stringText: {
+	        getter: function getter() {
+	            return this.vnode.text;
+	        }
+	    }
+	});
+	
+	var defineComponentProperties = function defineComponentProperties(inst, vnode) {
+	    inst.vnode = vnode;
+	    inst._inDevTools = false;
+	
+	    defineGetSetProperty(inst, "_hostNode", function () {
+	        // eslint-disable-next-line no-invalid-this
+	        return this.vnode.node;
 	    });
 	
-	    return inst;
-	}
+	    defineGetSetProperty(inst, "isWidget", function () {
+	        // eslint-disable-next-line no-invalid-this
+	        return this.vnode.isWidget;
+	    });
+	
+	    defineGetSetProperty(inst, "isVNode", function () {
+	        // eslint-disable-next-line no-invalid-this
+	        return this.vnode.isVNode;
+	    });
+	
+	    defineGetSetProperty(inst, "isVText", function () {
+	        // eslint-disable-next-line no-invalid-this
+	        return this.vnode.isVText;
+	    });
+	
+	    INTERFACE_PROPERTIES.forEach(function (prop) {
+	        defineGetSetProperty(inst, prop, function () {
+	            // eslint-disable-next-line no-invalid-this
+	            var vnode = this.vnode;
+	
+	
+	            if (vnode.isWidget) {
+	                if (hasProp.call(ReactCompositeComponentInterface, prop) && typeof ReactCompositeComponentInterface[prop].getter === "function") {
+	                    return ReactCompositeComponentInterface[prop].getter.call(this);
+	                }
+	
+	                return undefined;
+	            }
+	
+	            if (vnode.isVNode) {
+	                if (hasProp.call(ReactDOMComponentInterface, prop) && typeof ReactDOMComponentInterface[prop].getter === "function") {
+	                    return ReactDOMComponentInterface[prop].getter.call(this);
+	                }
+	
+	                return undefined;
+	            }
+	
+	            if (hasProp.call(ReactTextComponentInterface, prop) && typeof ReactTextComponentInterface[prop].getter === "function") {
+	                return ReactTextComponentInterface[prop].getter.call(this);
+	            }
+	
+	            return undefined;
+	        }, function (value) {
+	            // eslint-disable-next-line no-invalid-this
+	            var vnode = this.vnode;
+	
+	
+	            if (vnode.isWidget) {
+	                if (hasProp.call(ReactCompositeComponentInterface, prop) && typeof ReactCompositeComponentInterface[prop].setter === "function") {
+	                    return ReactCompositeComponentInterface[prop].setter.call(this, value);
+	                }
+	
+	                return value;
+	            }
+	
+	            if (vnode.isVNode) {
+	                if (hasProp.call(ReactDOMComponentInterface, prop) && typeof ReactDOMComponentInterface[prop].setter === "function") {
+	                    return ReactDOMComponentInterface[prop].setter.call(this, value);
+	                }
+	
+	                return value;
+	            }
+	
+	            if (hasProp.call(ReactTextComponentInterface, prop) && typeof ReactTextComponentInterface[prop].setter === "function") {
+	                return ReactTextComponentInterface[prop].setter.call(this, value);
+	            }
+	
+	            return value;
+	        });
+	    });
+	};
 	
 	var ReactTopLevelWrapper = function (_vrdom$Component) {
 	    _inherits(ReactTopLevelWrapper, _vrdom$Component);
@@ -257,7 +364,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rootID: vnode.key,
 	            state: null
 	        }
-	        // _hostContainerInfo: getHostContainerInfo(vnode)
 	    };
 	
 	    roots[wrapper._rootID] = wrapper;
@@ -323,13 +429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        instanceMap.set(vnode.key, inst);
 	    }
 	
-	    if (vnode.isWidget) {
-	        toReactCompositeComponent(vnode, inst);
-	    } else if (vnode.isVNode) {
-	        toReactDOMComponent(vnode, inst);
-	    } else {
-	        toReactTextComponent(vnode, inst);
-	    }
+	    defineComponentProperties(inst, vnode);
 	
 	    vnode._reactInternalDevToolInstance = inst;
 	    return inst;
@@ -536,9 +636,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {(ReactInternalComponent) => void} visitor
 	 */
 	function visitNonCompositeChildren(instance, visitor) {
-	    if (instance._renderedComponent) {
+	    if (instance.isWidget) {
 	        visitNonCompositeChildren(instance._renderedComponent, visitor);
-	    } else if (hasProp.call(instance, "_renderedChildren")) {
+	    } else if (instance.isVNode) {
 	        visitor(instance);
 	
 	        if (Array.isArray(instance._renderedChildren)) {
