@@ -29,14 +29,20 @@ const defineGetSetProperty = (obj, prop, getter, setter) => {
 
 const INTERFACE_PROPERTIES = [];
 
-const addInterface = _INTERFACE_PROPERTIES => {
-    Object.keys(_INTERFACE_PROPERTIES).forEach(prop => {
+const addInterface = iface => {
+    Object.keys(iface).forEach(prop => {
         if (INTERFACE_PROPERTIES.indexOf(prop) === -1) {
             INTERFACE_PROPERTIES.push(prop);
         }
+
+        if (typeof iface[prop] === "function") {
+            iface[prop] = {
+                getter: iface[prop]
+            };
+        }
     });
 
-    return _INTERFACE_PROPERTIES;
+    return iface;
 };
 
 /**
@@ -44,34 +50,28 @@ const addInterface = _INTERFACE_PROPERTIES => {
  * @type {Object}
  */
 const ReactDOMComponentInterface = addInterface({
-    getName: {
-        getter() {
-            return this.vnode.type;
-        }
+    getName() {
+        return this.vnode.type;
     },
 
-    _currentElement: {
-        getter() {
-            return this.vnode.element;
-        }
+    _currentElement() {
+        return this.vnode.element;
     },
 
-    _renderedChildren: {
-        getter() {
-            const children = this.vnode.children;
-            let _renderedChildren;
+    _renderedChildren() {
+        const children = this.vnode.children;
+        let _renderedChildren;
 
-            if (children !== null && "object" === typeof children) {
-                _renderedChildren = [];
+        if (children !== null && "object" === typeof children) {
+            _renderedChildren = [];
 
-                // eslint-disable-next-line guard-for-in
-                for (let canonicalKey in children) {
-                    _renderedChildren.push(toReactComponent(children[canonicalKey]));
-                }
+            // eslint-disable-next-line guard-for-in
+            for (let canonicalKey in children) {
+                _renderedChildren.push(toReactComponent(children[canonicalKey]));
             }
-
-            return _renderedChildren;
         }
+
+        return _renderedChildren;
     }
 });
 
@@ -80,10 +80,8 @@ const ReactDOMComponentInterface = addInterface({
  * @type {Object}
  */
 const ReactCompositeComponentInterface = addInterface({
-    getName: {
-        getter() {
-            return getDisplayName(this.vnode.element.type);
-        }
+    getName() {
+        return getDisplayName(this.vnode.element.type);
     },
 
     _currentElement: {
@@ -98,41 +96,33 @@ const ReactCompositeComponentInterface = addInterface({
         }
     },
 
-    _renderedComponent: {
-        getter() {
-            return toReactComponent(this.vnode.thunk.vnode);
-        }
+    _renderedComponent() {
+        return toReactComponent(this.vnode.thunk.vnode);
     },
 
-    _context: {
-        getter() {
-            if (this.stateless) {
-                return this.vnode.context;
-            }
-
-            return undefined;
+    _context() {
+        if (this.stateless) {
+            return this.vnode.context;
         }
+
+        return undefined;
     },
 
-    _instance: {
-        getter() {
-            if (this.stateless) {
-                return {
-                    context: this._context,
-                    props: this.vnode.element.props,
-                    refs: {},
-                    state: null
-                };
-            }
-
-            return this.vnode.thunk.component;
+    _instance() {
+        if (this.stateless) {
+            return {
+                context: this._context,
+                props: this.vnode.element.props,
+                refs: {},
+                state: null
+            };
         }
+
+        return this.vnode.thunk.component;
     },
 
-    stateless: {
-        getter() {
-            return this.vnode.thunk._type === "Stateless";
-        }
+    stateless() {
+        return this.vnode.thunk._type === "Stateless";
     }
 });
 
@@ -141,16 +131,12 @@ const ReactCompositeComponentInterface = addInterface({
  * @type {Object}
  */
 const ReactTextComponentInterface = addInterface({
-    _currentElement: {
-        getter() {
-            return this.vnode.text;
-        }
+    _currentElement() {
+        return this.vnode.text;
     },
 
-    _stringText: {
-        getter() {
-            return this.vnode.text;
-        }
+    _stringText() {
+        return this.vnode.text;
     }
 });
 
@@ -181,11 +167,12 @@ const defineComponentProperties = (inst, vnode) => {
     INTERFACE_PROPERTIES.forEach(prop => {
         defineGetSetProperty(inst, prop, function() {
             // eslint-disable-next-line no-invalid-this
-            const {vnode} = this;
+            const inst = this;
+            const {vnode} = inst;
 
             if (vnode.isWidget) {
                 if (hasProp.call(ReactCompositeComponentInterface, prop) && typeof ReactCompositeComponentInterface[prop].getter === "function") {
-                    return ReactCompositeComponentInterface[prop].getter.call(this);
+                    return ReactCompositeComponentInterface[prop].getter.call(inst);
                 }
 
                 return undefined;
@@ -193,24 +180,25 @@ const defineComponentProperties = (inst, vnode) => {
 
             if (vnode.isVNode) {
                 if (hasProp.call(ReactDOMComponentInterface, prop) && typeof ReactDOMComponentInterface[prop].getter === "function") {
-                    return ReactDOMComponentInterface[prop].getter.call(this);
+                    return ReactDOMComponentInterface[prop].getter.call(inst);
                 }
 
                 return undefined;
             }
 
             if (hasProp.call(ReactTextComponentInterface, prop) && typeof ReactTextComponentInterface[prop].getter === "function") {
-                return ReactTextComponentInterface[prop].getter.call(this);
+                return ReactTextComponentInterface[prop].getter.call(inst);
             }
 
             return undefined;
         }, function(value) {
             // eslint-disable-next-line no-invalid-this
-            const {vnode} = this;
+            const inst = this;
+            const {vnode} = inst;
 
             if (vnode.isWidget) {
                 if (hasProp.call(ReactCompositeComponentInterface, prop) && typeof ReactCompositeComponentInterface[prop].setter === "function") {
-                    return ReactCompositeComponentInterface[prop].setter.call(this, value);
+                    return ReactCompositeComponentInterface[prop].setter.call(inst, value);
                 }
 
                 return value;
@@ -218,14 +206,14 @@ const defineComponentProperties = (inst, vnode) => {
 
             if (vnode.isVNode) {
                 if (hasProp.call(ReactDOMComponentInterface, prop) && typeof ReactDOMComponentInterface[prop].setter === "function") {
-                    return ReactDOMComponentInterface[prop].setter.call(this, value);
+                    return ReactDOMComponentInterface[prop].setter.call(inst, value);
                 }
 
                 return value;
             }
 
             if (hasProp.call(ReactTextComponentInterface, prop) && typeof ReactTextComponentInterface[prop].setter === "function") {
-                return ReactTextComponentInterface[prop].setter.call(this, value);
+                return ReactTextComponentInterface[prop].setter.call(inst, value);
             }
 
             return value;
