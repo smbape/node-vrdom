@@ -94,6 +94,8 @@ var options = {
                 attrName: "capture"
             }
         },
+
+        // Attributes for any HTML Element
         b: {
             style: {
                 isProperty: true,
@@ -123,6 +125,21 @@ var options = {
     },
     obsoleteAttributesByTagName: {}
 };
+
+// https://w3c.github.io/webappsec-referrer-policy/
+options.extendedProperties.a = {
+    referrerPolicy: {
+        attrName: "referrer-policy"
+    },
+
+    noreferrer: {
+        attrName: "noreferrer"
+    }
+};
+
+["area", "img", "iframe", "link"].forEach(name => {
+    options.extendedProperties[name] = options.extendedProperties.a;
+});
 
 var wordsMatcherRegExp = /\w+(?:(?:, and| and|,) \w+)+(?: each|,)?/;
 
@@ -156,7 +173,7 @@ eachSeries([
 
 function initialDownload(done) {
     // var html5Version = "html51";
-    var html5Version = "2016/REC-html51-20161101";
+    var html5Version = "2017/REC-html51-20171003";
     var obj = {};
 
     obj["https://www.w3.org/TR/html401/index/attributes.html"] = "Index of the HTML 4 Attributes.html";
@@ -430,6 +447,7 @@ function onscrap(options, done) {
         done();
     });
 }
+
 function processHTML5ElementsAndAttributes(options, done) {
     var attributes = options.attributes;
     var elements = options.elements;

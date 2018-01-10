@@ -3223,11 +3223,6 @@
         "which": "1.2.14"
       },
       "dependencies": {
-        "acorn": {
-          "version": "5.1.1",
-          "resolved": "https://registry.npmjs.org/acorn/-/acorn-5.1.1.tgz",
-          "integrity": "sha512-vOk6uEMctu0vQrvuSqFdJyqj1Q0S5VTDL79qtjo+DhRr+1mmaD+tluFSCZqhvi/JUhXSzoZN2BhtstaPEeE8cw=="
-        },
         "babel-code-frame": {
           "version": "6.26.0",
           "resolved": "https://registry.npmjs.org/babel-code-frame/-/babel-code-frame-6.26.0.tgz",

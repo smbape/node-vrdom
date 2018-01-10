@@ -20,7 +20,7 @@ var testCommand = "node node_modules/karma/bin/karma start test/karma.conf.js";
 var rootBowerFile = sysPath.join(__dirname, "bower.json");
 
 var commands = {
-    prepublish: distribute,
+    prepack: distribute,
     lint: "node node_modules/eslint/bin/eslint.js \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
     "lint-fix": "node node_modules/eslint/bin/eslint.js --fix \"src/**/*.js\" \"vrdom-compat/**/*.js\" \"vrdom-devtools/**/*.js\" \"test/unit/app/node_modules/tests/**/*.js\" \"test/unit/app/node_modules/Triggers.js\"",
     combine: "node scripts/istanbul-combine.js",
@@ -101,20 +101,20 @@ var commands = {
         ], next);
     },
 
-    "watch-prepublish": function(next) {
+    "watch-prepack": function(next) {
         process.env.BRUNCH_PREPUBLISH = "1";
         spawn(commands.watch, next);
     },
 
-    "watch-prepublish-cover": function(next) {
+    "watch-prepack-cover": function(next) {
         process.env.COVERAGE = "1";
         process.env.BRUNCH_PREPUBLISH = "1";
         spawn(commands.watch, next);
     },
 
-    "prepublish-cover": function(next) {
+    "prepack-cover": function(next) {
         process.env.COVERAGE = "1";
-        spawn(commands.prepublish, next);
+        spawn(commands.prepack, next);
     },
 
     "build-cover": function(next) {
@@ -126,7 +126,7 @@ var commands = {
 };
 
 commands.build = [
-    commands.prepublish,
+    commands.prepack,
     commands["build-only"]
 ];
 
@@ -183,7 +183,7 @@ commands["test-cover-browsers"] = function(next) {
 };
 
 var aliases = {
-    distribute: "prepublish"
+    distribute: "prepack"
 };
 
 var command = process.argv[2];
@@ -212,9 +212,9 @@ function installTestClient(done) {
         "npm install",
         updateBowerJSON({
             dependencies: {
-                "preact": (void 0),
-                "preact-compat": (void 0),
-                "proptypes": (void 0)
+                "preact": undefined,
+                "preact-compat": undefined,
+                "proptypes": undefined
             }
         }),
         "bower install",

@@ -597,6 +597,9 @@ module.exports = {
         "type": "String",
         "attrName": "nonce"
     },
+    "noreferrer": {
+        "attrName": "noreferrer"
+    },
     "object": {
         "type": "String",
         "attrName": "object"
@@ -658,6 +661,9 @@ module.exports = {
         "isBoolean": true,
         "isProperty": true,
         "attrName": "readonly"
+    },
+    "referrerPolicy": {
+        "attrName": "referrer-policy"
     },
     "rel": {
         "type": "String",

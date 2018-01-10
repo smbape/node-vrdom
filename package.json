@@ -5,7 +5,7 @@
   "main": "dist/vrdom.js",
   "scripts": {
     "version": "node cli.js version",
-    "prepublish": "node cli.js prepublish",
+    "prepack": "node cli.js prepack",
     "postinstall": "node cli.js postinstall",
     "test": "node cli.js test",
     "lint": "node cli.js lint",

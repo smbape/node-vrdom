@@ -4928,6 +4928,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "type": "String",
 	        "attrName": "nonce"
 	    },
+	    "noreferrer": {
+	        "attrName": "noreferrer"
+	    },
 	    "object": {
 	        "type": "String",
 	        "attrName": "object"
@@ -4989,6 +4992,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        "isBoolean": true,
 	        "isProperty": true,
 	        "attrName": "readonly"
+	    },
+	    "referrerPolicy": {
+	        "attrName": "referrer-policy"
 	    },
 	    "rel": {
 	        "type": "String",

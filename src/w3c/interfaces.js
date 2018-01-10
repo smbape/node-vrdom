@@ -34,6 +34,12 @@ module.exports = {
             "hreflang": true,
             "methods": true,
             "name": true,
+            "noreferrer": {
+                "attrName": "noreferrer"
+            },
+            "referrerPolicy": {
+                "attrName": "referrer-policy"
+            },
             "rel": true,
             "rev": true,
             "shape": true,
@@ -79,6 +85,12 @@ module.exports = {
             "download": true,
             "hreflang": true,
             "noHref": true,
+            "noreferrer": {
+                "attrName": "noreferrer"
+            },
+            "referrerPolicy": {
+                "attrName": "referrer-policy"
+            },
             "rel": true,
             "shape": true,
             "target": true,
@@ -435,6 +447,12 @@ module.exports = {
             "marginHeight": true,
             "marginWidth": true,
             "name": true,
+            "noreferrer": {
+                "attrName": "noreferrer"
+            },
+            "referrerPolicy": {
+                "attrName": "referrer-policy"
+            },
             "sandbox": true,
             "scrolling": true,
             "src": true,
@@ -467,6 +485,12 @@ module.exports = {
             "isMap": true,
             "lowsrc": true,
             "name": true,
+            "noreferrer": {
+                "attrName": "noreferrer"
+            },
+            "referrerPolicy": {
+                "attrName": "referrer-policy"
+            },
             "sizes": true,
             "src": true,
             "srcset": true,
@@ -638,6 +662,12 @@ module.exports = {
             "href": true,
             "hreflang": true,
             "media": true,
+            "noreferrer": {
+                "attrName": "noreferrer"
+            },
+            "referrerPolicy": {
+                "attrName": "referrer-policy"
+            },
             "rel": true,
             "rev": true,
             "target": true,
