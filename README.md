@@ -66,7 +66,6 @@ vrdom.render(
     there are not used in production build of neither React nor Preact.
     However, empty proptypes exists to keep compatibility with existing react plugins.
   - **Warnings**: missing almost all React warings. ex: on aria-* and others. Again not used in production build
-  - **Developper Tool**
   - **Performance Tool**
   - **Addons**
   - **Undocumented react api** unstable_\*
@@ -77,7 +76,7 @@ Third party libraries can sometimes be painful to integrate with react.
 Hooks were created for that purpose.
 
 For example, to integrate [material design lite](https://getmdl.io/index.html)(MDL), some libraries specific to react have been created.  
-To use MDL, reading MDL documetion is not enough, you also need to read those libraries specific to react.
+To use MDL, reading MDL documention is not enough, you also need to read those libraries specific to react.
 
 With hooks, to integrate MDL, you can do
 
@@ -619,7 +618,7 @@ Here is the list of all supported attributes:
 
 ## History
 
-React uses a concept (interactions and UI at the same place) that I started to develop with Backbone 3 years ago and happily dropped when I discover React.  
+React uses a concept (interactions and UI at the same place) that I started to develop with Backbone 4 years ago (2014) and happily dropped when I discovered React.  
 However a friend talked to me about the [react license](http://react-etc.net/entry/your-license-to-use-react-js-can-be-revoked-if-you-compete-with-facebook).
 
 I don't understand a thing about the license implications and I don't want to be bound to things I do not understand.
@@ -628,20 +627,20 @@ That friend wasn't a good fan of React at the time and uses the license as an ar
 I told him:
 > Ok, I will create my own "React".
 
-I didn't wanted to recreate a React from scratch.  
+I didn't want to recreate a React from scratch.  
 I looked for alternatives. [Preact](https://github.com/developit/preact) + [Preact-compat](https://github.com/developit/preact-compat) seem promising.  
 Then I replaced React with Preact@6.4.0 in one project.
 
 I launched my project tests and ... many failed (more than 50%):  
-  - The asynchonous update of the view after set state was not appropriate with my tests (partially fixed with preact.options.syncComponentUpdates = true)
-  - Events were not unregistered after unmount
+  - The asynchonous updates of the view after set state was not appropriate with my tests (partially fixed with preact.options.syncComponentUpdates = true)
+  - Events were not unregistered after unmount causing memory leaks
   - Did not worked with my dialogs
-  - Did not work with my integration of material-design-lite because node is already removed in componentWillUnmount
+  - Did not work with my integration of material-design-lite because nodes are removed before componentWillUnmount
 
 ### Preact messes up with my component properties
 
-That is the most annoying issue for me.  
-All my components have a destroyed method called on componentWillUnmount, which contains  
+This was the most annoying issue for me.  
+All my components have a destroy method called on componentWillUnmount, which contains  
 
 ```javascript
 for (prop in this) {
@@ -652,19 +651,19 @@ for (prop in this) {
 }
 ```
 
-To prevent any potential memory leak, I delete every thing that was created by my components:
+To prevent any potential memory leak, I delete everything that was created by my components:
 
   - `props`, `refs` and `_reactInternalInstance` was created by React.
   - `id` is for debugging purpose.
   - any other owned properties must have been created by my components.  
 
-Because preact add multiple enumarable properties to any component, deleting them put preact in an unexpected state.
+Because preact add multiple enumarable properties to any component, deleting them puts preact in an unexpected state.
 
 Javascript has no "private" properties nor methods.  
-The best you can do is to define a generated random property, non enumerable and put all your stuff in that property.  
+The best you can do is to define a random, non enumerable, generated property and put all your stuff in that property.  
 Something similar is done in jQuery and React.
 
-I was unable to fully understand preact code to fix all of those problems. I gave up.
+I was unable to fully understand the preact code to fix all of those problems. I gave up.
 
 The good attitude should have been to open issues on preact.  
 However, the idea that a future problem may rise, a problem that I won't be able to solve because I was unable to make preact code myself pissed me off.
@@ -673,7 +672,7 @@ I was so pissed off that I started to create my own React.
 
 In conclusion, this library is an act of anger.
 
-Here is the [jsfiddle](https://jsfiddle.net/smbape/fgoL2anv/) with some bugs identified with preact.
+Here is a [jsfiddle](https://jsfiddle.net/smbape/fgoL2anv/) with some bugs identified with preact.
 
 # License
 
@@ -681,7 +680,7 @@ Here is the [jsfiddle](https://jsfiddle.net/smbape/fgoL2anv/) with some bugs ide
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
 
- Copyright (c) 2017 Stéphane MBAPE (http://smbape.com)
+ Copyright (c) 2018 Stéphane MBAPE (http://smbape.com)
 
  Everyone is permitted to copy and distribute verbatim or modified
  copies of this license document, and changing it is allowed as long
