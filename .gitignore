@@ -13,3 +13,5 @@
 /test/unit/work
 /src/w3c/specifications
 /src/mdn/specifications
+/package-lock.json
+/test/unit/package-lock.json

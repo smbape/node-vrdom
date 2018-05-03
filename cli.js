@@ -192,7 +192,12 @@ if (hasProp.call(aliases, command)) {
 }
 
 if (hasProp.call(commands, command)) {
-    spawn(commands[command]);
+    spawn(commands[command], err => {
+        if (err) {
+            err = typeof err === "number" ? new Error("last command exited with code " + err) : err;
+            throw err;
+        }
+    });
 } else if (command != null) {
     throw new Error("unknown command " + command);
 } else {

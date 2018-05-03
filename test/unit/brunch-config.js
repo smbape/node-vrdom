@@ -27,6 +27,33 @@ var sourcesReg = new RegExp(matcher(sources).source + /[/\\]/.source);
 var sourceModuleNameReg = new RegExp(sourcesReg.source + /(.*)$/.source);
 var lintPattern = new RegExp(matcher(sources.concat(["app/node_modules/tests"])).source + /[/\\]/.source);
 
+var es6rules = {
+    "arrow-parens": 0,
+    "arrow-spacing": 0,
+    "no-class-assign": 0,
+    "no-confusing-arrow": 0,
+    "no-const-assign": 0,
+    "no-dupe-class-members": 0,
+    "no-duplicate-imports": 0,
+    "no-new-symbol": 0,
+    "no-useless-computed-key": 0,
+    "no-useless-constructor": 0,
+    "no-useless-rename": 0,
+    "no-var": 0,
+    "object-shorthand": 0,
+    "prefer-arrow-callback": 0,
+    "prefer-const": 0,
+    "prefer-numeric-literals": 0,
+    "prefer-spread": 0,
+    "prefer-template": 0,
+    "require-yield": 0,
+    "rest-spread-spacing": 0,
+    "sort-imports": 0,
+    "symbol-description": 0,
+    "template-curly-spacing": 0,
+    "yield-star-spacing": 0
+};
+
 var doDistribution;
 if (process.env.BRUNCH_PREPUBLISH && /^(?:true|1|on|TRUE)$/.test(process.env.BRUNCH_PREPUBLISH)) {
     initDistribution();
@@ -188,25 +215,41 @@ exports.config = _.merge(config, {
     plugins: {
         eslint: {
             pattern: lintPattern,
-            warnOnly: true
+            warnOnly: true,
+            overrides: {
+                "*": ({data, path, map}) => {
+                    const name = basename(path, extname(path));
+
+                    return {
+                        rules: Object.assign({
+                            "no-invalid-this": 0,
+                            "no-unused-expressions": 0,
+                            "no-shadow": [2, {
+                                "allow": [
+                                    "require",
+                                    "promise",
+                                    "done",
+                                    "err",
+                                    "next",
+                                    name
+                                ]
+                            }],
+                            "no-unused-vars": [2, {
+                                vars: "all",
+                                args: "none",
+                                caughtErrors: "none",
+                                varsIgnorePattern: `\\b(?:factory|deps|${name})\\b`
+                            }]
+                        }, es6rules)
+                    };
+                }
+            }
         },
         amd: {
             mainTemplate: sysPath.resolve(__dirname, "templates", "main.js"),
             unitBuildDest: sysPath.resolve(__dirname, "test-main.js"),
-            jshint: false,
-            factories: {
-                fvrdom: function(plugin, modulePath, data, parsed) {
-                    var args = parsed[2],
-                        head = parsed[3],
-                        declaration = parsed[4],
-                        body = parsed[5];
-
-                    return head + "\ndeps.unshift(\"vrdom\");\n\nfunction factory(require, vrdom) {\n    /*jshint validthis: true */\n    \n    " + declaration + (args.join(", ")) + body + "\n    \n    return fvrdom.apply(this, Array.prototype.slice.call(arguments, 2));\n}";
-                }
-            }
         },
         babel: {
-            pretransform: [require("umd-builder/lib/spTransform")],
             ignore: ignore
         },
         autoReload: {

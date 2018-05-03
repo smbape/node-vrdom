@@ -6,6 +6,7 @@
   "scripts": {
     "version": "node cli.js version",
     "prepack": "node cli.js prepack",
+    "prepublishOnly": "node cli.js test --browsers Chrome,Firefox,Edge,IE11 --reporters progress --single-run",
     "postinstall": "node cli.js postinstall",
     "test": "node cli.js test",
     "lint": "node cli.js lint",

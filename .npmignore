@@ -1,0 +1,17 @@
+/build.log
+/chrome-extension
+/coverage
+/dist/*-cov.*
+/dist/*-cov-dev.*
+/karma-plugin
+/node_modules
+/patches
+/preprocessor
+/src
+/test
+/.babelrc
+/.eslintrc
+/npm-debug.log
+/*.sublime-project
+/*.sublime-workspace
+/package-lock.json
