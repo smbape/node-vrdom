@@ -43,15 +43,18 @@ module.exports = function(config) {
         customLaunchers: {
             IE11: {
                 base: "IE",
-                "x-ua-compatible": "IE=EmulateIE11"
+                "x-ua-compatible": "IE=EmulateIE11",
+                flags: ["-extoff"]
             },
             IE10: {
                 base: "IE",
-                "x-ua-compatible": "IE=EmulateIE10"
+                "x-ua-compatible": "IE=EmulateIE10",
+                flags: ["-extoff"]
             },
             IE9: {
                 base: "IE",
-                "x-ua-compatible": "IE=EmulateIE9"
+                "x-ua-compatible": "IE=EmulateIE9",
+                flags: ["-extoff"]
             }
         },
 

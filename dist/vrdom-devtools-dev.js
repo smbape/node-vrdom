@@ -619,15 +619,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {(ReactInternalComponent) => void} visitor
 	 */
 	function visitNonCompositeChildren(instance, visitor) {
-	    if (instance.isWidget) {
-	        visitNonCompositeChildren(instance._renderedComponent, visitor);
-	    } else if (instance.isVNode) {
-	        visitor(instance);
+	    if (instance == null) {
+	        return;
+	    }
 	
-	        if (Array.isArray(instance._renderedChildren)) {
-	            instance._renderedChildren.forEach(function (childInst) {
-	                visitNonCompositeChildren(childInst, visitor);
-	            });
+	    var stack = [[instance, visitor]];
+	
+	    var pushStack = function pushStack(childInst) {
+	        if (childInst) {
+	            stack.push([childInst, visitor]);
+	        }
+	    };
+	
+	    var args = void 0;
+	    while (args = stack.pop()) {
+	        instance = args[0];
+	        visitor = args[1];
+	
+	        if (instance.isWidget) {
+	            stack.push([instance._renderedComponent, visitor]);
+	        } else if (instance.isVNode) {
+	            visitor(instance);
+	
+	            if (Array.isArray(instance._renderedChildren)) {
+	                instance._renderedChildren.forEach(pushStack);
+	            }
 	        }
 	    }
 	}
